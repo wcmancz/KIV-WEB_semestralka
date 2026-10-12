@@ -1,0 +1,489 @@
+:root {
+    --moss: #1f3a2b;
+    --moss-2: #2d5640;
+    --leaf: #e3ebdc;
+    --paper: #f7f9f4;
+    --ink: #17211b;
+    --muted: #5b6b61;
+    --saffron: #e0a526;
+    --danger: #a3261c;
+    --danger-bg: #fbe9e6;
+    --line: #c9d5c4;
+    --font-head: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+    margin: 0;
+    background: var(--leaf);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ---------- Rozložení ---------- */
+.login {
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(280px, 5fr) 6fr;
+}
+
+/* Levý panel: název zoo a pavilony jako orientační seznam */
+.login__side {
+    background: var(--moss);
+    color: var(--leaf);
+    padding: clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.login__brand {
+    margin: 0;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(6rem, 18vw, 14rem);
+    line-height: .8;
+    letter-spacing: -0.05em;
+    color: var(--saffron);
+}
+
+.login__pavilony {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 1.125rem;
+}
+
+.login__pavilony li {
+    padding: .55rem 0;
+    border-top: 1px solid rgba(227, 235, 220, .22);
+}
+
+/* Pravý panel: formulář */
+.login__panel {
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    max-width: 26rem;
+    padding: 2rem 1.5rem;
+}
+
+.login__panel h1 {
+    margin: 0 0 1.75rem;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- Přepínač typu účtu ---------- */
+.switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 1.5rem;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+}
+
+.switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.switch label {
+    text-align: center;
+    padding: .6rem .75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: .9375rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+}
+
+.switch input:checked + label {
+    background: var(--moss);
+    color: var(--paper);
+}
+
+.switch input:focus-visible + label {
+    outline: 3px solid var(--saffron);
+    outline-offset: 2px;
+}
+
+/* ---------- Pole ---------- */
+.field { margin-bottom: 1.25rem; }
+
+.field label {
+    display: block;
+    margin-bottom: .35rem;
+    font-weight: 600;
+    font-size: .9375rem;
+}
+
+.field input {
+    width: 100%;
+    padding: .8rem .9rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.field input:hover { border-color: var(--moss-2); }
+
+.field input:focus {
+    outline: none;
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px rgba(224, 165, 38, .45);
+}
+
+/* ---------- Tlačítko ---------- */
+.btn {
+    width: 100%;
+    margin-top: .5rem;
+    padding: .9rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--paper);
+    background: var(--moss);
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .15s;
+}
+
+.btn:hover { background: var(--moss-2); }
+
+.btn:focus-visible {
+    outline: 3px solid var(--saffron);
+    outline-offset: 2px;
+}
+
+/* ---------- Chyba ---------- */
+.alert {
+    margin: 0 0 1.25rem;
+    padding: .75rem .9rem;
+    color: var(--danger);
+    background: var(--danger-bg);
+    border-left: 4px solid var(--danger);
+    border-radius: 4px;
+    font-size: .9375rem;
+}
+
+/* ---------- Patička ---------- */
+.login__foot {
+    margin: 1.5rem 0 0;
+    color: var(--muted);
+    font-size: .9375rem;
+}
+
+.login__foot[hidden] { display: none; }
+
+.login__foot a {
+    color: var(--moss);
+    font-weight: 600;
+    text-underline-offset: 3px;
+}
+
+.login__foot a:hover { color: var(--moss-2); }
+
+/* ---------- Mobil ---------- */
+@media (max-width: 760px) {
+    .login { grid-template-columns: 1fr; }
+
+    .login__side {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .login__brand { font-size: 4.5rem; }
+    .login__pavilony { display: none; }
+
+    .login__panel { padding: 2rem 1.5rem 3rem; }
+    .login__panel h1 { font-size: 2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
+
+/* =========================================================
+   Úvodní stránka (index.php)
+   ========================================================= */
+.site { height: auto; min-height: 100%; }
+
+.site__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .9rem clamp(1rem, 4vw, 3rem);
+    background: var(--moss);
+    color: var(--leaf);
+}
+
+.site__brand {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--saffron);
+    text-decoration: none;
+}
+
+.site__user { display: flex; align-items: center; gap: 1rem; }
+.site__user form { margin: 0; }
+
+.site__name { font-weight: 600; text-align: right; }
+.site__name small {
+    display: block;
+    font-weight: 400;
+    font-size: .8125rem;
+    color: rgba(227, 235, 220, .75);
+}
+
+.link-btn {
+    padding: .5rem .9rem;
+    font: inherit;
+    font-weight: 600;
+    font-size: .9375rem;
+    color: var(--leaf);
+    background: transparent;
+    border: 1.5px solid rgba(227, 235, 220, .45);
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s, color .15s;
+}
+.link-btn:hover { background: var(--leaf); color: var(--moss); }
+.link-btn:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+
+.site__main {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2.5rem clamp(1rem, 4vw, 2rem) 4rem;
+}
+
+.site__main h1 {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.notice {
+    margin: 0 0 2rem;
+    padding: .85rem 1rem;
+    background: var(--paper);
+    border-left: 4px solid var(--saffron);
+    border-radius: 4px;
+}
+
+.pav { margin-bottom: 2.25rem; }
+
+.pav__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .25rem 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--moss);
+}
+.pav__head h2 {
+    margin: 0;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+.pav__head p { margin: 0; color: var(--muted); font-size: .9375rem; }
+
+.zvirata { list-style: none; margin: 0; padding: 0; }
+
+.zvire {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem 1rem;
+    padding: .8rem .75rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.zvire--sluzba {
+    background: var(--paper);
+    border-left: 4px solid var(--saffron);
+}
+
+.zvire__info { display: flex; flex-direction: column; }
+.zvire__jmeno { font-weight: 600; }
+.zvire__potrava { font-size: .875rem; color: var(--muted); }
+
+.badge {
+    padding: .3rem .7rem;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--moss);
+    background: var(--saffron);
+    border-radius: 999px;
+}
+.badge small { font-weight: 500; margin-left: .35rem; }
+
+@media (max-width: 760px) {
+    .site__main h1 { font-size: 2rem; }
+}
+
+
+
+/* =========================================================
+   Správa péče (admin.php)
+   ========================================================= */
+.site__nav { display: flex; gap: .25rem; margin-right: auto; margin-left: 1.5rem; }
+.site__nav a { padding: .45rem .8rem; color: var(--leaf); font-weight: 500; font-size: .9375rem; text-decoration: none; border-radius: 999px; }
+.site__nav a:hover { background: rgba(227, 235, 220, .12); }
+.site__nav a[aria-current="page"] { background: var(--leaf); color: var(--moss); font-weight: 600; }
+.site__main--wide { max-width: 72rem; }
+
+.panel-title { display: flex; align-items: baseline; gap: .75rem; margin: 0 0 1rem; font-family: var(--font-head); font-weight: 700; font-size: 1.5rem; }
+.panel-title--next { margin-top: 3rem; }
+.count { font-family: var(--font-body); font-weight: 500; font-size: .875rem; color: var(--muted); }
+
+.icon { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Přidělování: jedna karta ---------- */
+.assign { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.assign__top { display: grid; grid-template-columns: 17rem minmax(0, 1fr); }
+
+.assign h3 { margin: 0 0 .75rem; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.assign fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.assign legend { padding: 0; }
+
+.who { padding: 1.25rem 1rem 1.25rem 1.25rem; background: var(--paper); border-right: 1px solid var(--line); }
+.what { padding: 1.25rem 1.5rem 1.5rem; }
+
+.opt { position: relative; }
+.pick { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* seznam zaměstnanců */
+.person { display: flex; align-items: center; gap: .7rem; padding: .55rem .65rem; border-radius: 10px; cursor: pointer; }
+.person:hover { background: var(--leaf); }
+.person__text { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.25; }
+.person__name { font-weight: 600; font-size: .9375rem; }
+.person__meta { font-size: .8125rem; color: var(--muted); }
+.person__load { flex: none; min-width: 1.5rem; padding: .1rem .45rem; text-align: center; font-size: .75rem; font-weight: 700; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 999px; }
+.pick:checked + .person { background: var(--moss); color: var(--paper); }
+.pick:checked + .person .person__meta { color: rgba(227, 235, 220, .75); }
+.pick:checked + .person .avatar { background: var(--saffron); color: var(--ink); }
+.pick:checked + .person .person__load { background: transparent; color: var(--leaf); border-color: rgba(227, 235, 220, .4); }
+.pick:focus-visible + .person, .pick:focus-visible + .chip { outline: 3px solid var(--saffron); outline-offset: 2px; }
+
+.avatar { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--leaf); color: var(--moss); font-weight: 700; font-size: .8125rem; }
+
+/* zvířata */
+.pavs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; }
+.pavs .pav-wide { grid-column: 1 / -1; }
+.pav-name { display: block; margin-bottom: .45rem; font-size: .8125rem; font-weight: 600; color: var(--moss-2); }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip { display: inline-block; padding: .35rem .8rem; font-size: .875rem; font-weight: 500; background: #fff; border: 1.5px solid var(--line); border-radius: 999px; cursor: pointer; transition: background-color .12s, border-color .12s; }
+.chip:hover { border-color: var(--moss-2); }
+.pick:checked + .chip { background: var(--moss); border-color: var(--moss); color: var(--paper); }
+
+/* spodní lišta: péče + termín + odeslání */
+.how { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem 1.25rem; padding: 1.1rem 1.5rem; background: var(--paper); border-top: 1px solid var(--line); }
+.how .field { margin: 0; }
+.how .field label { margin-bottom: .3rem; font-size: .8125rem; color: var(--muted); }
+.how input[type="date"], .how select { padding: .6rem .75rem; font: inherit; font-size: .9375rem; color: var(--ink); background: #fff; border: 1.5px solid var(--line); border-radius: 8px; }
+.how input:focus, .how select:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(224, 165, 38, .45); }
+.how input:disabled { opacity: .45; }
+.check { display: inline-flex; align-items: center; gap: .45rem; padding-bottom: .65rem; font-size: .9375rem; cursor: pointer; }
+.check input { width: 1.05rem; height: 1.05rem; accent-color: var(--moss); }
+
+.how__go { display: flex; align-items: center; gap: 1.25rem; flex: 1 1 100%; padding-top: 1rem; border-top: 1px dashed var(--line); }
+.how__sum { flex: 1; margin: 0; font-size: .9375rem; color: var(--muted); }
+.how__sum strong { color: var(--ink); }
+.how .btn { width: auto; margin: 0; padding: .75rem 1.6rem; white-space: nowrap; }
+.btn:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+
+/* ---------- Tabulka péčí ---------- */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; margin-bottom: .9rem; }
+.search { flex: 1 1 16rem; max-width: 24rem; padding: .6rem .9rem; font: inherit; font-size: .9375rem; background: #fff; border: 1.5px solid var(--line); border-radius: 999px; }
+.search:focus { outline: none; border-color: var(--moss); box-shadow: 0 0 0 3px rgba(224, 165, 38, .45); }
+.seg { display: inline-flex; padding: 3px; background: #fff; border: 1.5px solid var(--line); border-radius: 999px; }
+.seg button { padding: .3rem .9rem; font: inherit; font-size: .875rem; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--moss); color: var(--paper); }
+.toolbar .count { margin-left: auto; }
+
+.table-wrap { position: relative; overflow-x: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+.table { width: 100%; border-collapse: collapse; font-size: .9375rem; }
+.table th, .table td { white-space: nowrap; text-align: left; }
+.table th { padding: .8rem 1.1rem; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--paper); border-bottom: 1px solid var(--line); }
+.table td { padding: .8rem 1.1rem; border-bottom: 1px solid var(--leaf); vertical-align: middle; }
+.table tbody tr:last-child td { border-bottom: 0; }
+.table tbody tr:hover td { background: #fafcf8; }
+.table tr.is-ended td:not(.cell-actions) { opacity: .5; }
+.table tr[hidden] { display: none; }
+
+.cell-person { display: flex; align-items: center; gap: .75rem; }
+.cell-name { display: block; font-weight: 600; line-height: 1.25; }
+.cell-sub { display: block; font-size: .8125rem; color: var(--muted); line-height: 1.25; }
+.period span { color: var(--muted); }
+
+.pill { display: inline-block; padding: .22rem .65rem; font-size: .8125rem; font-weight: 600; border-radius: 6px; }
+.pill--a { background: #f6e3b4; color: #6b4a05; }
+.pill--b { background: #cfe3d4; color: #1f3a2b; }
+.pill--c { background: #e3e6e8; color: #33414a; }
+
+.status { display: inline-flex; align-items: center; gap: .45rem; font-weight: 600; font-size: .875rem; }
+.status::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }
+.status--on { color: var(--moss-2); }
+.status--off { color: var(--muted); }
+
+.cell-actions { text-align: right; width: 1%; }
+.cell-actions form { display: inline-flex; gap: .15rem; margin: 0; }
+.icon-btn { display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0; color: var(--muted); background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.icon-btn:hover { background: var(--leaf); color: var(--moss); }
+.icon-btn--danger:hover { background: var(--danger-bg); color: var(--danger); }
+.icon-btn:focus-visible { outline: 3px solid var(--saffron); outline-offset: 1px; }
+.icon-btn.is-gap { visibility: hidden; }
+.empty-row td { padding: 2rem 1rem; text-align: center; color: var(--muted); }
+
+@media (max-width: 860px) {
+    .assign__top { grid-template-columns: 1fr; }
+    .who { border-right: 0; border-bottom: 1px solid var(--line); }
+    .pavs { grid-template-columns: 1fr; }
+    .how__go { flex-wrap: wrap; }
+    .how .btn { width: 100%; }
+}
+@media (max-width: 760px) {
+    .site__head { flex-wrap: wrap; }
+    .site__nav { order: 3; width: 100%; margin: 0; }
+}
