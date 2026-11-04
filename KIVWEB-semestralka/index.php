@@ -4,112 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Zoo – přehled zvířat</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="site">
+<body>
 
-<header class="site__head">
-    <a class="site__brand" href="index.php">Zoo</a>
-    <div class="site__user">
-        <!-- Nepřihlášený: -->
-        <a class="link-btn" href="css/login.php">Přihlásit se</a>
+<nav class="navbar navbar-expand bg-primary" data-bs-theme="dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.php"><i class="fa-solid fa-paw me-2"></i>Zoo</a>
+        <div class="d-flex align-items-center gap-3 text-white">
+            <!-- Nepřihlášený: -->
+            <a class="btn btn-outline-light btn-sm" href="app/view/login.php"><i class="fa-solid fa-right-to-bracket me-1"></i>Přihlásit se</a>
 
-        <!-- Přihlášený (zobraz místo tlačítka výše):
-        <span class="site__name">Jan Pythagoras <small>admin</small></span>
-        <form method="post" action="index.php">
-            <button type="submit" name="odhlasit" value="1" class="link-btn">Odhlásit se</button>
-        </form>
-        -->
+            <!-- Přihlášený (zobraz místo tlačítka výše):
+            <span class="text-end lh-sm">Jan Pythagoras <small class="d-block text-white-50">admin</small></span>
+            <form method="post" action="index.php"><button type="submit" name="odhlasit" value="1" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-right-from-bracket me-1"></i>Odhlásit se</button></form>
+            -->
+        </div>
     </div>
-</header>
+</nav>
 
-<main class="site__main">
-    <h1>Naše zvířata</h1>
+<main class="container py-4" style="max-width: 52rem;">
+    <h1 class="mb-4">Naše zvířata</h1>
 
     <!-- Zpráva jen pro zaměstnance:
-    <p class="notice">Máte aktivní službu u 2 zvířat. Najdete je označené v seznamu.</p>
+    <div class="alert alert-warning" role="alert"><i class="fa-solid fa-circle-info me-2"></i>Máte aktivní službu u 2 zvířat. Najdete je označené v seznamu.</div>
     -->
 
-    <section class="pav">
-        <header class="pav__head">
-            <h2>Pavilon šelem</h2>
-            <p>Severní část, 5 000 m²</p>
-        </header>
-        <ul class="zvirata">
-            <li class="zvire">
-                <div class="zvire__info">
-                    <span class="zvire__jmeno">Lev pustinný</span>
-                    <span class="zvire__potrava">Maso</span>
-                </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">
+            <h2 class="h5 mb-0">Pavilon šelem</h2>
+            <small class="text-body-secondary">Severní část, 5 000 m²</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Lev pustinný</span><small class="d-block text-body-secondary">Maso</small></div>
             </li>
-            <li class="zvire">
-                <div class="zvire__info">
-                    <span class="zvire__jmeno">Tygr indický</span>
-                    <span class="zvire__potrava">Maso</span>
-                </div>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Tygr indický</span><small class="d-block text-body-secondary">Maso</small></div>
             </li>
+        </ul>
+    </div>
 
-            <!-- Příklad zvířete, u kterého má zaměstnanec službu:
-            <li class="zvire zvire--sluzba">
-                <div class="zvire__info">
-                    <span class="zvire__jmeno">Tygr indický</span>
-                    <span class="zvire__potrava">Maso</span>
-                </div>
-                <span class="badge">Vaše služba: Krmení <small>od 1. 3. 2025</small></span>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">
+            <h2 class="h5 mb-0">Tropický pavilon</h2>
+            <small class="text-body-secondary">Východní část, 3 500 m²</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Zebra stepní</span><small class="d-block text-body-secondary">Tráva</small></div>
             </li>
-            -->
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Slon africký</span><small class="d-block text-body-secondary">Tráva</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Žirafa Rothschildova</span><small class="d-block text-body-secondary">Tráva</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Chřestýš lesní</span><small class="d-block text-body-secondary">Maso</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Kudlanka malajská</span><small class="d-block text-body-secondary">Tráva</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Sklípkan Smithův</span><small class="d-block text-body-secondary">Tráva</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Mlok skvrnitý</span><small class="d-block text-body-secondary">Smíšená</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Želva sloní</span><small class="d-block text-body-secondary">Potrava neuvedena</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Rosnice siná</span><small class="d-block text-body-secondary">Potrava neuvedena</small></div>
+            </li>
         </ul>
-    </section>
+    </div>
 
-    <section class="pav">
-        <header class="pav__head">
-            <h2>Tropický pavilon</h2>
-            <p>Východní část, 3 500 m²</p>
-        </header>
-        <ul class="zvirata"> <!-- SEM MÍSTO PEVNĚ DANÝCH DAT PŘES PHP VYPSAT ZVÍŘATA -->
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Zebra stepní</span><span class="zvire__potrava">Tráva</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Slon africký</span><span class="zvire__potrava">Tráva</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Žirafa Rothschildova</span><span class="zvire__potrava">Tráva</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Chřestýš lesní</span><span class="zvire__potrava">Maso</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Kudlanka malajská</span><span class="zvire__potrava">Tráva</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Sklípkan Smithův</span><span class="zvire__potrava">Tráva</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Mlok skvrnitý</span><span class="zvire__potrava">Smíšená</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Želva sloní</span><span class="zvire__potrava">Potrava neuvedena</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Rosnice siná</span><span class="zvire__potrava">Potrava neuvedena</span></div></li>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">
+            <h2 class="h5 mb-0">Pavilon primátů</h2>
+            <small class="text-body-secondary">Západní část, 4 200 m²</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Gorila nížinná</span><small class="d-block text-body-secondary">Ovoce a zelenina</small></div>
+            </li>
         </ul>
-    </section>
+    </div>
 
-    <section class="pav">
-        <header class="pav__head">
-            <h2>Pavilon primátů</h2>
-            <p>Západní část, 4 200 m²</p>
-        </header>
-        <ul class="zvirata">
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Gorila nížinná</span><span class="zvire__potrava">Ovoce a zelenina</span></div></li>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">
+            <h2 class="h5 mb-0">Akvarijní část zoo</h2>
+            <small class="text-body-secondary">Západní část, 1 500 m²</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Klaun očkatý</span><small class="d-block text-body-secondary">Smíšená</small></div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Trnucha</span><small class="d-block text-body-secondary">Smíšená</small></div>
+            </li>
         </ul>
-    </section>
+    </div>
 
-    <section class="pav">
-        <header class="pav__head">
-            <h2>Akvarijní část zoo</h2>
-            <p>Západní část, 1 500 m²</p>
-        </header>
-        <ul class="zvirata">
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Klaun očkatý</span><span class="zvire__potrava">Smíšená</span></div></li>
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Trnucha</span><span class="zvire__potrava">Smíšená</span></div></li>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">
+            <h2 class="h5 mb-0">Pavilon ptáků</h2>
+            <small class="text-body-secondary">Severní část, 2 000 m²</small>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div><span class="fw-semibold">Plameňák růžový</span><small class="d-block text-body-secondary">Smíšená</small></div>
+            </li>
         </ul>
-    </section>
+    </div>
 
-    <section class="pav">
-        <header class="pav__head">
-            <h2>Pavilon ptáků</h2>
-            <p>Severní část, 2 000 m²</p>
-        </header>
-        <ul class="zvirata">
-            <li class="zvire"><div class="zvire__info"><span class="zvire__jmeno">Plameňák růžový</span><span class="zvire__potrava">Smíšená</span></div></li>
-        </ul>
-    </section>
+    <!-- Příklad zvířete, u kterého má zaměstnanec službu:
+    <li class="list-group-item list-group-item-warning d-flex justify-content-between align-items-center">
+        <div><span class="fw-semibold">Tygr indický</span><small class="d-block text-body-secondary">Maso</small></div>
+        <span class="badge text-bg-warning">Vaše služba: Krmení · od 1. 3. 2025</span>
+    </li>
+    -->
 </main>
-
 </body>
 </html>
