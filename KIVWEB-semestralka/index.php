@@ -1,6 +1,7 @@
 <?php
 /*
  * vstupní bod webu (rozcestník) a úvodní stránka s přehledem zvířat.
+ * každá stránka se otvírá přes tento soubor podle toho co říká parametr ?page=
  */
 const ROOT = __DIR__ . '/';
 
@@ -11,6 +12,8 @@ require ROOT . 'app/core/autoloader.inc.php';
 use App\Controller\RegisterController;
 use App\Controller\LoginController;
 use App\Controller\UvodController;
+use App\Controller\PeceController;
+use App\Controller\PridatController;
 
 session_start();   // musí být před jakýmkoli výstupem; pak je dostupné pole $_SESSION
 
@@ -28,6 +31,12 @@ switch ($page) {
         break;
     case 'register':
         (new RegisterController())->register();
+        break;
+    case 'admin':
+        (new PeceController())->sprava();
+        break;
+    case 'pridat':
+        (new PridatController())->pridat();
         break;
     default:
         http_response_code(404);

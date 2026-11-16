@@ -26,12 +26,20 @@ spl_autoload_register(function (string $trida): void {
         return;                                                      // třídy PHP (PDO...) autoloader nezajímají
     }
 
-    $casti  = explode('\\', substr($trida, strlen($prefix)));         // 'Core\Database' -> ['Core', 'Database']
-    $soubor = strtolower(array_pop($casti)) . '.class.php';          // 'database.class.php'
+    // 'App\Core\Database -> odřízneme App\ a rozdělíme podle \ -> ['Core', 'Database']
+    $casti  = explode('\\', substr($trida, strlen($prefix)));
+
+    // poslední čáast je jméno třídy -> jméno souboru: database.class.php
+    $soubor = strtolower(array_pop($casti)) . '.class.php';
+
+    // zbylé čáasti jsou složky: ['Core'] -> 'core/
     $slozka = $casti ? strtolower(implode('/', $casti)) . '/' : '';  // 'core/'
 
+    // výsledná cesta
     $cesta = ROOT . 'app/' . $slozka . $soubor;                      // ROOT = kořen projektu (z index.php)
     if (is_file($cesta)) {
         require $cesta;                                              // soubor existuje -> načti ho
+    } else {
+        echo 'Autoloader nenašel: ' . $cesta . '<br>';
     }
 });

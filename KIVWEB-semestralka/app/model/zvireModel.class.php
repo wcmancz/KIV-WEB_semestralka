@@ -24,7 +24,7 @@ class ZvireModel{
     {
         $radky = $this->db->select(
         'SELECT pav.ID_pavilon, pav.jmeno_pavilonu, pav.lokace, pav.rozloha,
-            z.jmeno_zvirete, p.typ_potravy
+            z.id_zvirata, z.jmeno_zvirete, p.typ_potravy
             FROM pavilon pav
             LEFT JOIN zvirata z ON z.pavilon = pav.ID_pavilon
             LEFT JOIN potrava p ON p.ID_potrava = z.potrava
@@ -34,10 +34,34 @@ class ZvireModel{
         $pavilony = [];
         foreach($radky as $r){
             $pavilony[$r['ID_pavilon']]['info'] = $r;
-            if ($r['jmeno_zvirete'] != null){
+            if ($r['jmeno_zvirete'] !== null){
                 $pavilony[$r['ID_pavilon']]['zvirata'][] = $r;
             }
         }
         return $pavilony;
+    }
+
+    public function potravy(): array{
+        return $this->db->select(
+            'SELECT ID_potrava, typ_potravy FROM potrava ORDER BY ID_potrava'
+        );
+    }
+
+    public function pavilonySPoctem(): array {
+        return $this->db->select(
+            'SELECT pav.ID_pavilon, pav.jmeno_pavilonu, pav.lokace, pav.rozloha, COUNT(z.id_zvirata) AS pocet
+             FROM pavilon pav
+             LEFT JOIN zvirata z ON z.pavilon = pav.ID_pavilon
+             GROUP BY pav.ID_pavilon, pav.jmeno_pavilonu, pav.lokace, pav.rozloha
+             ORDER BY pav.jmeno_pavilonu'
+        );
+    }
+
+    public function pridat (string $jmeno, int $pavilon, ?int $potrava): int {
+        $this->db->execute(
+            'INSERT INTO zvirata (jmeno_zvirete, pavilon, potrava) VALUES (:jmeno, :pavilon, :potrava)',
+            [':jmeno' => $jmeno, ':pavilon' => $pavilon, ':potrava' => $potrava]
+        );
+        return (int) $this->db->lastId();
     }
 }
