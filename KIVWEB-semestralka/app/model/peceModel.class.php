@@ -15,7 +15,8 @@ class PeceModel {
         return $this->db->select('SELECT ID_typ_pece, nazev_typu FROM typ_pece ORDER BY ID_typ_pece');
     }
 
-    public function vse(): array {
+    public function vse(?int $idZamestnance = null): array
+    {
         return $this->db->select(
             'SELECT pe.ID_pece, pe.datum_od, pe.datum_do, pe.typ_pece, t.nazev_typu,
                     z.jmeno, z.prijmeni, r.role_zam, zv.jmeno_zvirete, pav.jmeno_pavilonu
@@ -25,7 +26,9 @@ class PeceModel {
              JOIN zvirata zv ON zv.id_zvirata = pe.ID_zvirata
              LEFT JOIN pavilon pav ON pav.ID_pavilon = zv.pavilon
              LEFT JOIN typ_pece t ON t.ID_typ_pece = pe.typ_pece
-             ORDER BY pe.ID_pece DESC'
+             ' . ($idZamestnance !== null ? 'WHERE pe.ID_zamestnance = :id' : '') . '
+             ORDER BY pe.ID_pece DESC',
+            $idZamestnance !== null ? [':id' => $idZamestnance] : []
         );
     }
 

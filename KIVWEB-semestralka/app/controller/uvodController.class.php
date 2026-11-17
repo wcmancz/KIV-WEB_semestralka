@@ -6,8 +6,9 @@ namespace App\Controller;
 
 use App\Model\ZvireModel;
 use App\Model\PeceModel;
+use App\Core\BaseController;
 
-class UvodController{
+class UvodController extends BaseController{
     public function uvod(): void{
         $pavilony = (new ZvireModel())->pavilonyAZvirata();
         $user = $_SESSION['user'] ?? null;

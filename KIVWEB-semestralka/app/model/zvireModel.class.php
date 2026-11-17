@@ -64,4 +64,31 @@ class ZvireModel{
         );
         return (int) $this->db->lastId();
     }
+
+    public function seznam(): array
+    {
+        return $this->db->select(
+            'SELECT z.id_zvirata, z.jmeno_zvirete, pav.jmeno_pavilonu,
+            (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zvirata = z.id_zvirata) AS pocet_pece
+            FROM zvirata z LEFT JOIN pavilon pav ON pav.ID_pavilon = z.pavilon
+            ORDER BY z.jmeno_zvirete'
+        );
+    }
+
+    public function podleId(int $id): ?array
+    {
+        $radky = $this->db->select(
+            'SELECT z.id_zvirata, z.jmeno_zvirete, pav.jmeno_pavilonu,
+            (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zvirata = z.id_zvirata) AS pocet_pece
+            FROM zvirata z LEFT JOIN pavilon pav ON pav.ID_pavilon = z.pavilon
+            WHERE z.id_zvirata = :id',
+            [':id' => $id]
+        );
+        return $radky[0] ?? null;
+    }
+
+    public function smazat(int $id): bool
+    {
+        return $this->db->execute('DELETE FROM zvirata WHERE id_zvirata = :id', [':id' => $id]) > 0;
+    }
 }

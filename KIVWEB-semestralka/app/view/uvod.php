@@ -21,7 +21,6 @@ if (!defined('ROOT')) {
 <main class="container py-4" style="max-width: 52rem;">
     <h1 class="mb-4">Naše zvířata</h1>
 
-    <?php /* Zpráva jen pro zaměstnance: u kolika zvířat má aktivní službu ($sluzby připravil UvodController). */ ?>
     <?php if ($user && $user['typ'] === 'zamestnanec'): ?>
         <div class="alert alert-warning" role="alert">
             <i class="fa-solid fa-circle-info me-2"></i>
@@ -32,7 +31,6 @@ if (!defined('ROOT')) {
         </div>
     <?php endif; ?>
 
-    <?php /* Pro každý pavilon jedna karta (třída „card“ z Bootstrapu), uvnitř seznam jeho zvířat. */ ?>
     <?php foreach ($pavilony as $pav): ?>
         <div class="card shadow-sm mb-4">
             <div class="card-header d-flex flex-wrap justify-content-between align-items-baseline gap-1">

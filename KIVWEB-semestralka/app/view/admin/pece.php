@@ -23,8 +23,7 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
 <?php $aktivni = 'sprava'; require ROOT . 'app/view/components/navbar.php'; ?>
 
 <main class="container py-4">
-    <h1 class="mb-4">Správa péče</h1>
-
+    <h1 class="mb-4"><?= $jeAdmin ? 'Správa péče' : 'Moje péče' ?></h1>
     <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
     <?php if ($uspech): ?>
         <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
@@ -33,9 +32,8 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
         <div class="alert alert-danger" role="alert"><?= htmlspecialchars($chybaAkce) ?></div>
     <?php endif; ?>
 
-    <?php /* ===================== FORMULÁŘ: PŘIDĚLENÍ PÉČE ===================== */ ?>
-    <form method="post" action="index.php?page=admin" class="card shadow-sm mb-5" novalidate>
-        <?php /* csrf = bezpečnostní token, akce = co se má stát (zpracuje PeceController) */ ?>
+    <?php if ($jeAdmin): ?>
+        <form method="post" action="index.php?page=admin" class="card shadow-sm mb-5" novalidate>
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
         <input type="hidden" name="akce" value="pridat">
 
@@ -117,6 +115,7 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
             <div class="form-text mt-2">Každé vybrané zvíře se uloží jako samostatný záznam. Prázdné „Do“ znamená dobu neurčitou.</div>
         </div>
     </form>
+    <?php endif; ?>
 
     <h2 class="h4 mb-3">Přidělená péče</h2>
 
@@ -125,12 +124,16 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                 <tr>
-                    <th scope="col">Zaměstnanec</th>
+                    <?php if ($jeAdmin): ?>
+                        <th scope="col">Zaměstnanec</th>
+                    <?php endif; ?>
                     <th scope="col">Zvíře</th>
                     <th scope="col">Péče</th>
                     <th scope="col">Období</th>
                     <th scope="col">Stav</th>
-                    <th scope="col"><span class="visually-hidden">Akce</span></th>
+                    <?php if ($jeAdmin): ?>
+                        <th scope="col"><span class="visually-hidden">Akce</span></th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -144,19 +147,21 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
                     $planovana = $z['datum_od'] !== null && $z['datum_od'] > $dnes;           // ještě nezačala
                     $ukoncena  = $z['datum_do'] !== null && $z['datum_do'] < $dnes;           // už skončila
                     $konciDnes = $z['datum_do'] !== null && $z['datum_do'] === $dnes;         // dnes je poslední den
-                    $mozeUkoncit = !$planovana && !$ukoncena && !$konciDnes;                  // běží a nemá konec
-                    $iniciely = mb_strtoupper(mb_substr($z['jmeno'], 0, 1) . mb_substr($z['prijmeni'], 0, 1));
+                    $muzeUkoncit = !$planovana && !$ukoncena && !$konciDnes;                  // běží a nemá konec
+                    $inicialy = mb_strtoupper(mb_substr($z['jmeno'], 0, 1) . mb_substr($z['prijmeni'], 0, 1));
                     ?>
                     <tr data-id="<?= (int) $z['ID_pece'] ?>"<?= $ukoncena ? ' class="row-ended"' : '' ?>>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="avatar"><?= htmlspecialchars($iniciely) ?></span>
-                                <span class="lh-sm">
-                                        <span class="fw-semibold"><?= htmlspecialchars($z['jmeno'] . ' ' . $z['prijmeni']) ?></span>
-                                        <small class="d-block text-body-secondary"><?= htmlspecialchars($z['role_zam']) ?></small>
-                                    </span>
-                            </div>
-                        </td>
+                        <?php if($jeAdmin): ?>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="avatar"><?= htmlspecialchars($inicialy) ?></span>
+                                    <span class="lh-sm">
+                                            <span class="fw-semibold"><?= htmlspecialchars($z['jmeno'] . ' ' . $z['prijmeni']) ?></span>
+                                            <small class="d-block text-body-secondary"><?= htmlspecialchars($z['role_zam']) ?></small>
+                                        </span>
+                                </div>
+                            </td>
+                        <?php endif; ?>
                         <td class="lh-sm">
                             <span class="fw-semibold"><?= htmlspecialchars($z['jmeno_zvirete']) ?></span>
                             <small class="d-block text-body-secondary"><?= htmlspecialchars($z['jmeno_pavilonu'] ?? '') ?></small>
@@ -177,25 +182,26 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
                                 <span class="badge text-bg-success">Aktivní</span>
                             <?php endif; ?>
                         </td>
-                        <td class="cell-actions text-end">
-                            <?php /* Každé tlačítko je malý formulář: odešle akci (ukoncit / smazat), číslo záznamu a token. */ ?>
-                            <?php if ($mozeUkoncit): ?>
+                        <?php if ($jeAdmin): ?>
+                            <td class="cell-actions text-end">
+                                <?php if ($muzeUkoncit): ?>
+                                    <form method="post" action="index.php?page=admin" class="d-inline">
+                                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                                        <input type="hidden" name="id_pece" value="<?= (int) $z['ID_pece'] ?>">
+                                        <button type="submit" name="akce" value="ukoncit" class="btn btn-sm btn-outline-secondary" title="Ukončit péči (poslední den bude dnes)">
+                                            <i class="fa-solid fa-circle-stop"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                                 <form method="post" action="index.php?page=admin" class="d-inline">
                                     <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
                                     <input type="hidden" name="id_pece" value="<?= (int) $z['ID_pece'] ?>">
-                                    <button type="submit" name="akce" value="ukoncit" class="btn btn-sm btn-outline-secondary" title="Ukončit péči (poslední den bude dnes)">
-                                        <i class="fa-solid fa-circle-stop"></i>
+                                    <button type="submit" name="akce" value="smazat" class="btn btn-sm btn-outline-danger" title="Smazat záznam">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
-                            <?php endif; ?>
-                            <form method="post" action="index.php?page=admin" class="d-inline">
-                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
-                                <input type="hidden" name="id_pece" value="<?= (int) $z['ID_pece'] ?>">
-                                <button type="submit" name="akce" value="smazat" class="btn btn-sm btn-outline-danger" title="Smazat záznam">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
-                        </td>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

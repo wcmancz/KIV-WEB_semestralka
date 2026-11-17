@@ -1,12 +1,4 @@
 <?php
-/*
- * login.php – VIEW: šablona přihlášení, jen HTML.
- *
- * Žádné SQL ani kontrola hesla – jen výpis proměnných, které připravil LoginController:
- * $chyba, $uspech, $typ a $login. Načítá ji LoginController (index.php?page=login).
- */
-
-// Ochrana: když někdo otevře soubor napřímo (ROOT zná jen index.php), pošleme ho přes rozcestník.
 if (!defined('ROOT')) {
     header('Location: ../../index.php?page=login');
     exit;
@@ -18,11 +10,11 @@ if (!defined('ROOT')) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Přihlášení – Zoo</title>
+    <?php /* Styly: Bootstrap (hotové třídy), Font Awesome (ikony) a naše style.css – stejně jako v index.php. */ ?>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body class="d-flex align-items-center min-vh-100">
 <main class="container py-4">
     <div class="row justify-content-center">
@@ -33,11 +25,8 @@ if (!defined('ROOT')) {
                 <div class="card-body p-4">
                     <h1 class="h4 mb-4">Přihlášení</h1>
 
-                    <?php /* method="post" odešle data na server; action míří zpátky na tuto stránku (zpracuje ji PHP nahoře). */ ?>
                     <form method="post" action="index.php?page=login">
-                        <?php /* Přepínač typu účtu: radio tlačítka „přestylovaná“ třídami btn-check a btn-outline-primary. Bez JavaScriptu.
-                         Odeslaná hodnota je v $_POST['typ'] (navstevnik / zamestnanec); PHP nahoře podle ní vybírá, kde se uživatel hledá.
-                         Po chybě se volba vrací zpět: tlačítko, které bylo vybrané, dostane atribut checked. */ ?>
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
                         <div class="btn-group w-100 mb-4" role="group" aria-label="Typ účtu">
                             <input type="radio" class="btn-check" name="typ" id="t-nav" value="navstevnik" <?= $typ !== 'zamestnanec' ? 'checked' : '' ?>>
                             <label class="btn btn-outline-primary" for="t-nav">Návštěvník</label>
@@ -45,12 +34,10 @@ if (!defined('ROOT')) {
                             <label class="btn btn-outline-primary" for="t-zam">Zaměstnanec</label>
                         </div>
 
-                        <?php /* Zelená zpráva „Účet byl vytvořen“ – zobrazí se jednou po úspěšné registraci. */ ?>
                         <?php if ($uspech): ?>
                             <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
                         <?php endif; ?>
 
-                        <?php /* Chybová hláška se zobrazí jen tehdy, když PHP nahoře nastavilo $chyba. */ ?>
                         <?php if ($chyba): ?>
                             <div class="alert alert-danger" role="alert"><?= htmlspecialchars($chyba) ?></div>
                         <?php endif; ?>

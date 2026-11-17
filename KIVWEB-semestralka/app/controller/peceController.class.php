@@ -10,14 +10,19 @@ use App\Model\ZvireModel;
 class PeceController extends BaseController {
 
     public function sprava(): void {
-        $this->vyzadatAdmina();
+        $this->vyzadatRoli(['superadmin', 'admin', 'zamestnanec', 'brigadnik']);
+        $user = $this->user();
+        $jeAdmin = in_array($user['role'], ['admin', 'superadmin'], true);
+
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->vyzadatAdmina();
+        }
 
         $pece = new PeceModel();
-        $zamestnanci = (new ZamestnanecModel())->vseSPoctem();
 
-        $pavilony = (new ZvireModel())->pavilonyAZvirata();
-
-        $typy = $pece->typy();
+        $zamestnanci = $jeAdmin ? (new ZamestnanecModel())->vseSPoctem() : [];
+        $pavilony = $jeAdmin ? (new ZvireModel())->pavilonyAZvirata() : [];
+        $typy = $jeAdmin ? $pece->typy(): [];
 
         $dnes = date("Y-m-d");
 
@@ -58,16 +63,15 @@ class PeceController extends BaseController {
                 $this->zpravaPoAkci($ok, 'Záznam byl smazán.', 'Záznam se nepodařilo smazat.');
             } elseif ($akce === 'ukoncit'){
                 $ok = $pece->ukoncit((int) ($_POST['id_pece'] ?? 0));
-                $this->zpravaPoAkci($ok, 'Pece byla ukončena', 'Péči se nepodařilo ukončit');
+                $this->zpravaPoAkci($ok, 'Péče byla ukončena', 'Péči se nepodařilo ukončit');
             } else {
                 http_response_code(400);
                 exit('Neznámá akce');
             }
         }
 
-        $user = $this->user();
         $csrf = $this->csrfToken();
-        $zaznamy = $pece->vse();
+        $zaznamy = $jeAdmin ? $pece->vse(): $pece->vse((int) $user['id']);
 
         require ROOT . 'app/view/admin/pece.php';
     }
@@ -104,7 +108,7 @@ class PeceController extends BaseController {
         } else {
             foreach ($d['zvirata'] as $idZvirete) {
                 if(!in_array($idZvirete, $idZvirat, true)) {
-                    $chyby['zvirata'][] = 'Vybrané zvíře neexistuje.';
+                    $chyby['zvirata'] = 'Vybrané zvíře neexistuje.';
                     break;
                 }
             }

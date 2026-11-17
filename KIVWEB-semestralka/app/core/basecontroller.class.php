@@ -7,9 +7,6 @@ abstract class BaseController{
         return $_SESSION['user'] ?? null;
     }
 
-    /*
-     * pro kontrolu rolí na vyzadatAdmina()
-     */
     protected function vyzadatRoli(array $povoleneRole): void {
         $user = $this->user();
 
@@ -30,6 +27,11 @@ abstract class BaseController{
             $_SESSION['csrf'] = bin2hex(random_bytes(32));
         }
         return $_SESSION['csrf'];
+    }
+
+    protected function csrfPlatny(): bool {
+        $token = $_POST["csrf"] ?? '';
+        return is_string($token) && hash_equals($this->csrfToken(), $token);
     }
 
     protected function overCsrf(): void {

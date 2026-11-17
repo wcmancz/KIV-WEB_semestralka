@@ -67,4 +67,30 @@ class ZamestnanecModel
         );
         return (int) $this->db->lastId();
     }
+
+    public function seznam():array {
+        return $this->db->select(
+            'SELECT z.ID_zamestnance, z.jmeno, z.prijmeni, z.login, r.role_zam,
+            (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zamestnance = z.ID_zamestnance) AS pocet_pece
+            FROM zamestnanci z JOIN role_zam r ON r.id_role = z.id_role
+            ORDER BY z.prijmeni, z.jmeno'
+        );
+    }
+
+    public function podleId(int $id): ?array
+    {
+        $radky = $this->db->select(
+            'SELECT z.ID_zamestnance, z.jmeno, z.prijmeni, z.login, r.role_zam,
+            (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zamestnance = z.ID_zamestnance) AS pocet_pece
+            FROM zamestnanci z JOIN role_zam r ON r.id_role = z.id_role
+            WHERE z.ID_zamestnance = :id',
+            [':id' => $id]
+        );
+        return $radky[0] ?? null;
+    }
+
+    public function smazat(int $id): bool
+    {
+        return $this->db->execute('DELETE FROM zamestnanci WHERE ID_zamestnance = :id', [':id' => $id]) > 0;
+    }
 }

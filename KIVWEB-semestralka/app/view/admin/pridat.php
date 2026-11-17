@@ -16,7 +16,7 @@ $popisRole = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Přidat – Zoo</title>
+    <title>Přidat a odebrat – Zoo</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -28,6 +28,7 @@ $popisRole = [
 <main class="container py-4">
     <h1 class="mb-4">Přidat</h1>
 
+    <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
     <?php if ($uspech): ?>
         <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
     <?php endif; ?>
@@ -165,6 +166,82 @@ $popisRole = [
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i>Přidat zvíře</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <h2 class="h4 mt-5 mb-3">Odebrat</h2>
+    <p class="text-body-secondary">Odebrat jde jen záznam bez přidělené péče. Nejdřív ji smažte ve správě péče. Odebrání nelze vrátit.</p>
+
+    <div class="row g-4">
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header"><h3 class="h5 mb-0"><i class="fa-solid fa-user-minus me-2"></i>Zaměstnanci</h3></div>
+                <div class="table-responsive" style="max-height: 22rem; overflow-y: auto;">
+                    <table class="table align-middle mb-0">
+                        <tbody>
+                        <?php foreach ($seznamZam as $z): ?>
+                            <tr>
+                                <td class="lh-sm">
+                                    <span class="fw-semibold"><?= htmlspecialchars($z['jmeno'] . ' ' . $z['prijmeni']) ?></span>
+                                    <small class="d-block text-body-secondary"><?= htmlspecialchars($z['login'] ?? '') ?> · <?= htmlspecialchars($z['role_zam']) ?></small>
+                                </td>
+                                <td class="text-end">
+                                    <?php if ($z['duvod'] === null): ?>
+                                        <form method="post" action="index.php?page=vymazat" class="d-inline"
+                                              onsubmit="return confirm('Opravdu odebrat zaměstnance <?= htmlspecialchars(addslashes($z['jmeno'] . ' ' . $z['prijmeni']), ENT_QUOTES) ?>?');">
+                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                                            <input type="hidden" name="akce" value="smazat_zamestnance">
+                                            <input type="hidden" name="id" value="<?= (int) $z['ID_zamestnance'] ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Odebrat zaměstnance"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    <?php else: ?>
+                                        <?php /* Tlačítko je vypnuté a důvod je vidět po najetí myší. Server pravidlo kontroluje i tak. */ ?>
+                                        <span title="<?= htmlspecialchars($z['duvod']) ?>">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled><i class="fa-solid fa-trash"></i></button>
+                                            </span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header"><h3 class="h5 mb-0"><i class="fa-solid fa-paw me-2"></i>Zvířata</h3></div>
+                <div class="table-responsive" style="max-height: 22rem; overflow-y: auto;">
+                    <table class="table align-middle mb-0">
+                        <tbody>
+                        <?php foreach ($seznamZvirat as $z): ?>
+                            <tr>
+                                <td class="lh-sm">
+                                    <span class="fw-semibold"><?= htmlspecialchars($z['jmeno_zvirete']) ?></span>
+                                    <small class="d-block text-body-secondary"><?= htmlspecialchars($z['jmeno_pavilonu'] ?? 'bez pavilonu') ?></small>
+                                </td>
+                                <td class="text-end">
+                                    <?php if ($z['duvod'] === null): ?>
+                                        <form method="post" action="index.php?page=vymazat" class="d-inline"
+                                              onsubmit="return confirm('Opravdu odebrat zvíře <?= htmlspecialchars(addslashes($z['jmeno_zvirete']), ENT_QUOTES) ?>?');">
+                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                                            <input type="hidden" name="akce" value="smazat_zvire">
+                                            <input type="hidden" name="id" value="<?= (int) $z['id_zvirata'] ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Odebrat zvíře"><i class="fa-solid fa-trash"></i></button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span title="<?= htmlspecialchars($z['duvod']) ?>">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" disabled><i class="fa-solid fa-trash"></i></button>
+                                            </span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </main>

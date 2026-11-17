@@ -39,7 +39,5 @@ spl_autoload_register(function (string $trida): void {
     $cesta = ROOT . 'app/' . $slozka . $soubor;                      // ROOT = kořen projektu (z index.php)
     if (is_file($cesta)) {
         require $cesta;                                              // soubor existuje -> načti ho
-    } else {
-        echo 'Autoloader nenašel: ' . $cesta . '<br>';
     }
 });

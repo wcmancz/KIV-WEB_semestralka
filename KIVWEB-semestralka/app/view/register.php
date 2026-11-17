@@ -1,16 +1,9 @@
 <?php
-/*
- * proměnné připravil RegisterController: $chyby, $jmeno, $email.
- * Načítá ji RegisterController (index.php?page=register).
- */
-
-// Ochrana: když někdo otevře soubor napřímo (ROOT zná jen index.php), pošleme ho přes rozcestník.
 if (!defined('ROOT')) {
     header('Location: ../../index.php?page=register');
     exit;
 }
 
-// Pomocná funkce jen pro vzhled: třída is-invalid obarví políčko s chybou červeně (Bootstrap).
 $neplatne = fn(string $pole): string => isset($chyby[$pole]) ? ' is-invalid' : '';
 ?>
 <!DOCTYPE html>
@@ -33,8 +26,9 @@ $neplatne = fn(string $pole): string => isset($chyby[$pole]) ? ' is-invalid' : '
                 <div class="card-body p-4">
                     <h1 class="h4 mb-4">Registrace</h1>
 
-                    <?php /* novalidate vypne kontrolu prohlížeče, aby se vždy ukázaly chyby ze serveru (ty jsou rozhodující). */ ?>
                     <form method="post" action="index.php?page=register" novalidate>
+                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                        <?php if (isset($chyby['formular'])): ?><div class="alert alert-danger" role="alert"><?= htmlspecialchars($chyby['formular']) ?></div><?php endif; ?>
                         <div class="mb-3">
                             <label for="jmeno" class="form-label">Jméno</label>
                             <input type="text" class="form-control<?= $neplatne('jmeno') ?>" id="jmeno" name="jmeno" value="<?= htmlspecialchars($jmeno) ?>" maxlength="50" autocomplete="name" required autofocus>

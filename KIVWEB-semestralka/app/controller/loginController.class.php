@@ -4,10 +4,11 @@
  */
 namespace App\Controller;
 
+use App\Core\BaseController;
 use App\Model\UzivatelModel;
 use App\Model\ZamestnanecModel;
 
-class LoginController
+class LoginController extends BaseController
 {
     /** Obslouží index.php?page=login (zobrazení formuláře i jeho zpracování). */
     public function login(): void
@@ -33,10 +34,15 @@ class LoginController
             $heslo = $user['heslo'] ?? '';
             $typ   = ($_POST['typ'] ?? '') === 'zamestnanec' ? 'zamestnanec' : 'navstevnik';
 
-            // Podle zvoleného typu se uživatel hledá v jiné tabulce.
-            $prihlasen = $typ === 'zamestnanec'
-                ? $this->overZamestnance($login, $heslo)
-                : $this->overNavstevnika($login, $heslo);
+            $tokenOk = $this->csrfPlatny();
+
+            if (!$tokenOk) {
+                $prihlasen = null;
+            } else {
+                $prihlasen = $typ === 'zamestnanec'
+                    ? $this->overZamestnance($login, $heslo)
+                    : $this->overNavstevnika($login, $heslo);
+            }
 
             if ($prihlasen) {
                 session_regenerate_id(true);          // nové ID session po přihlášení
@@ -45,8 +51,12 @@ class LoginController
                 exit;
             }
             // Stejná chyba pro špatné jméno i špatné heslo.
-            $chyba = 'Přihlašovací údaje nejsou správné.';
+            $chyba = $tokenOk
+                ? 'Přihlašovací údaje nejsou správné'
+                : 'Platnost formuláře vypršela. Zkuste prosím znovu';
         }
+
+        $csrf = $this->csrfToken();
 
         require ROOT . 'app/view/login.php';          // VIEW: šablona vidí $chyba, $typ, $login, $uspech
     }
@@ -54,6 +64,11 @@ class LoginController
     /** Obslouží index.php?page=logout. */
     public function logout(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php');
+            exit;
+        }
+        $this->overCsrf();
         $_SESSION = [];                                // vymazat data (nikdy unset($_SESSION))
         if (ini_get('session.use_cookies')) {
             $p = session_get_cookie_params();

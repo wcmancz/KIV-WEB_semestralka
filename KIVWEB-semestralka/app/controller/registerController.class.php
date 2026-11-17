@@ -6,10 +6,11 @@
  */
 namespace App\Controller;
 
+use App\Core\BaseController;
 use App\Model\UzivatelModel;
 use PDOException;
 
-class RegisterController
+class RegisterController extends BaseController
 {
     public function register(): void
     {
@@ -31,6 +32,10 @@ class RegisterController
             $email  = trim($_POST['email'] ?? '');
             $heslo  = $_POST['heslo'] ?? '';
             $heslo2 = $_POST['heslo2'] ?? '';
+
+            if (!$this->csrfPlatny()) {
+                $chyby['formular'] = 'Platnost formuláře vypršela. Zkuste to prosím znovu.';
+            }
 
             // Každá kontrola je samostatná, takže se ukážou všechny chyby najednou.
             // mb_strlen počítá znaky (ne bajty), takže české znaky se počítají správně.
@@ -60,7 +65,6 @@ class RegisterController
                     header('Location: index.php?page=login');
                     exit;
                 } catch (PDOException $e) {
-                    // SQLSTATE 23000 (text!) = porušení unikátního klíče: e-mail se mezitím zaregistroval jinde.
                     if ($e->getCode() === '23000') {
                         $chyby['email'] = 'Účet s tímto e-mailem už existuje.';
                     } else {
@@ -69,9 +73,8 @@ class RegisterController
                 }
             }
         }
+        $csrf = $this->csrfToken();
 
-        // VIEW: načte šablonu. Proměnné $chyby, $jmeno a $email jsou v ní dostupné,
-        // protože se šablona vkládá uvnitř této metody. (To je 2. varianta MVC z přednášky – výstup tiskne šablona.)
         require ROOT . 'app/view/register.php';
     }
 }
