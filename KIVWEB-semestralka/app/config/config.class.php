@@ -14,5 +14,5 @@ class Config
     public const DB_NAME = 'zvirata';     // název databáze – bez něj PHP neví, kterou databázi použít
     public const DB_USER = 'root';        // uživatel (v Laragonu root)
     public const DB_PASS = 'root';            // heslo (v Laragonu prázdné)
-    public const DEBUG = false;
+    public const DEBUG = true;
 }

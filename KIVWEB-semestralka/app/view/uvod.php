@@ -43,9 +43,16 @@ if (!defined('ROOT')) {
                     <?php $moje = $sluzby[$z['id_zvirata']] ?? []; ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center gap-2<?= $moje ? ' list-group-item-warning' : '' ?>">
                         <div>
-                            <span class="fw-semibold"><?= htmlspecialchars($z['jmeno_zvirete']) ?></span>
+                            <?php if ($user && $user['typ'] === 'zamestnanec'): ?>
+                                <a class="fw-semibold text-decoration-none" href="index.php?page=zvire&amp;id=<?= (int) $z['id_zvirata'] ?>"><?= htmlspecialchars($z['jmeno_zvirete']) ?></a>
+                            <?php else: ?>
+                                <span class="fw-semibold"><?= htmlspecialchars($z['jmeno_zvirete']) ?></span>
+                            <?php endif; ?>
                             <small class="d-block text-body-secondary"><?= htmlspecialchars($z['typ_potravy'] ?? 'Potrava neuvedena') ?></small>
                         </div>
+                        <?php if (!empty($problemy[$z['id_zvirata']])): ?>
+                            <span class="badge text-bg-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i>Problém: <?= (int) $problemy[$z['id_zvirata']] ?></span>
+                        <?php endif; ?>
                         <?php foreach ($moje as $sluzba): ?>
                             <span class="badge text-bg-warning">Vaše služba: <?= htmlspecialchars($sluzba['nazev_typu']) ?></span>
                         <?php endforeach; ?>

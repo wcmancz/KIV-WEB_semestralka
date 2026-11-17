@@ -91,4 +91,17 @@ class ZvireModel{
     {
         return $this->db->execute('DELETE FROM zvirata WHERE id_zvirata = :id', [':id' => $id]) > 0;
     }
+
+    public function detail(int $id): ?array
+    {
+        $radky = $this->db->select(
+            'SELECT z.id_zvirata, z.jmeno_zvirete, pav.jmeno_pavilonu, pav.lokace, p.typ_potravy
+             FROM zvirata z
+             LEFT JOIN pavilon pav ON pav.ID_pavilon = z.pavilon
+             LEFT JOIN potrava p ON p.ID_potrava = z.potrava
+             WHERE z.id_zvirata = :id',
+            [':id' => $id]
+        );
+        return $radky[0] ?? null;
+    }
 }

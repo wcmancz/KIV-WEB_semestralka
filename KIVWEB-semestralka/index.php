@@ -14,6 +14,7 @@ use App\Controller\RegisterController;
 use App\Controller\LoginController;
 use App\Controller\UvodController;
 use App\Controller\PeceController;
+use App\Controller\ZvireController;
 use App\Controller\PridatController;
 
 error_reporting(E_ALL);
@@ -52,6 +53,9 @@ switch ($page) {
         break;
     case 'vymazat':
         (new PridatController())->vymazat();
+        break;
+    case 'zvire':
+        (new ZvireController())->detail();
         break;
     default:
         http_response_code(404);
