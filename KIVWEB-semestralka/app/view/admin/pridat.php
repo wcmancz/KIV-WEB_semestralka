@@ -21,11 +21,11 @@ $popisRole = [
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <?php $aktivni = 'pridat'; require ROOT . 'app/view/components/navbar.php'; ?>
 
-<main class="container py-4">
+<main class="container py-4 flex-grow-1">
     <h1 class="mb-4">Přidat</h1>
 
     <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
@@ -80,6 +80,12 @@ $popisRole = [
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="email" class="form-label">E-mail</label>
+                            <input type="email" class="form-control<?= isset($chybyZam['email']) ? ' is-invalid' : '' ?>" id="email" name="email"
+                                   maxlength="100" autocomplete="off" required value="<?= htmlspecialchars($oldZam['email']) ?>">
+                            <div class="form-text">Zaměstnanec se může přihlásit e-mailem i přihlašovacím jménem.</div>
                         </div>
                         <div class="col-12">
                             <label for="login" class="form-label">Přihlašovací jméno</label>
@@ -245,5 +251,7 @@ $popisRole = [
         </div>
     </div>
 </main>
+<?php require ROOT . 'app/view/components/footer.php'; ?>
+
 </body>
 </html>

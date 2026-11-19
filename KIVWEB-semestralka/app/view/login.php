@@ -10,7 +10,6 @@ if (!defined('ROOT')) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Přihlášení – Zoo</title>
-    <?php /* Styly: Bootstrap (hotové třídy), Font Awesome (ikony) a naše style.css – stejně jako v index.php. */ ?>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -27,13 +26,6 @@ if (!defined('ROOT')) {
 
                     <form method="post" action="index.php?page=login">
                         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
-                        <div class="btn-group w-100 mb-4" role="group" aria-label="Typ účtu">
-                            <input type="radio" class="btn-check" name="typ" id="t-nav" value="navstevnik" <?= $typ !== 'zamestnanec' ? 'checked' : '' ?>>
-                            <label class="btn btn-outline-primary" for="t-nav">Návštěvník</label>
-                            <input type="radio" class="btn-check" name="typ" id="t-zam" value="zamestnanec" <?= $typ === 'zamestnanec' ? 'checked' : '' ?>>
-                            <label class="btn btn-outline-primary" for="t-zam">Zaměstnanec</label>
-                        </div>
-
                         <?php if ($uspech): ?>
                             <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
                         <?php endif; ?>
@@ -43,9 +35,8 @@ if (!defined('ROOT')) {
                         <?php endif; ?>
 
                         <div class="mb-3">
-                            <label for="identifikator" class="form-label">E-mail / přihlašovací jméno</label>
+                            <label for="identifikator" class="form-label">Přihlašovací jméno nebo e-mail</label>
                             <input type="text" class="form-control" id="identifikator" name="user[login]" value="<?= htmlspecialchars($login) ?>" autocomplete="username" required autofocus>
-                            <div class="form-text">Návštěvník zadává e-mail, zaměstnanec přihlašovací jméno.</div>
                         </div>
 
                         <div class="mb-4">

@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Core\BaseController;
 use App\Model\UzivatelModel;
-use App\Model\ZamestnanecModel;
 
 class LoginController extends BaseController
 {
@@ -21,8 +20,7 @@ class LoginController extends BaseController
 
         // Tyto proměnné uvidí šablona (viz require na konci metody).
         $chyba = '';
-        $typ   = 'navstevnik';   // zvolený typ účtu; při prvním zobrazení je vybraný „Návštěvník“
-        $login = '';             // co uživatel napsal do prvního políčka (vrací se do formuláře při chybě)
+        $login = '';             // co uživatel napsal do prvního políčka: login nebo e-mail (vrací se do formuláře při chybě)
 
         // Jednorázová zpráva po registraci (uloží ji RegisterController). Po přečtení se smaže.
         $uspech = $_SESSION['flash'] ?? '';
@@ -32,20 +30,14 @@ class LoginController extends BaseController
             $user  = $_POST['user'] ?? [];                 // pole user[login] a user[heslo] z formuláře
             $login = trim($user['login'] ?? '');           // POZOR: políčko se jmenuje user[login], ne login
             $heslo = $user['heslo'] ?? '';
-            $typ   = ($_POST['typ'] ?? '') === 'zamestnanec' ? 'zamestnanec' : 'navstevnik';
 
             $tokenOk = $this->csrfPlatny();
 
-            if (!$tokenOk) {
-                $prihlasen = null;
-            } else {
-                $prihlasen = $typ === 'zamestnanec'
-                    ? $this->overZamestnance($login, $heslo)
-                    : $this->overNavstevnika($login, $heslo);
-            }
+            $prihlasen = $tokenOk ? $this->overUzivatele($login, (string) $heslo) : null;
 
             if ($prihlasen) {
                 session_regenerate_id(true);          // nové ID session po přihlášení
+                unset($_SESSION['csrf']);             // po přihlášení nový token
                 $_SESSION['user'] = $prihlasen;       // takhle si web pamatuje, kdo je přihlášen
                 header('Location: index.php');
                 exit;
@@ -58,7 +50,7 @@ class LoginController extends BaseController
 
         $csrf = $this->csrfToken();
 
-        require ROOT . 'app/view/login.php';          // VIEW: šablona vidí $chyba, $typ, $login, $uspech
+        require ROOT . 'app/view/login.php';          // VIEW: šablona vidí $chyba, $login, $uspech
     }
 
     /** Obslouží index.php?page=logout. */
@@ -79,25 +71,16 @@ class LoginController extends BaseController
         exit;
     }
 
-    /** Vrátí údaje zaměstnance pro session, nebo null, když jméno nebo heslo nesedí. */
-    private function overZamestnance(string $login, string $heslo): ?array
+    private function overUzivatele(string $identifikator, string $heslo): ?array
     {
-        $z = (new ZamestnanecModel())->podleLoginu($login);        // dotaz provede MODEL
+        $u = (new UzivatelModel())->podleLoginuNeboEmailu($identifikator);   // dotaz provede MODEL
         // password_verify porovná heslo s hashem z databáze (heslo se neukládá jako text)
-        if ($z && $z['heslo'] && password_verify($heslo, $z['heslo'])) {
-            return ['typ' => 'zamestnanec', 'id' => (int) $z['ID_zamestnance'],
-                'jmeno' => $z['jmeno'] . ' ' . $z['prijmeni'], 'role' => $z['role_zam']];
-        }
-        return null;
-    }
-
-    /** Vrátí údaje návštěvníka pro session, nebo null, když e-mail nebo heslo nesedí. */
-    private function overNavstevnika(string $email, string $heslo): ?array
-    {
-        $n = (new UzivatelModel())->podleEmailu($email);
-        if ($n && password_verify($heslo, $n['heslo'])) {
-            return ['typ' => 'navstevnik', 'id' => (int) $n['id_uzivatele'],
-                'jmeno' => $n['jmeno'], 'role' => 'navstevnik'];
+        if ($u && $u['heslo'] && password_verify($heslo, $u['heslo'])) {
+            return [
+                'id'    => (int) $u['id_uzivatele'],
+                'jmeno' => trim($u['jmeno'] . ' ' . ($u['prijmeni'] ?? '')),
+                'role'  => $u['role_zam'],
+            ];
         }
         return null;
     }

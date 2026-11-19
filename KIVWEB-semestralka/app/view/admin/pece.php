@@ -18,11 +18,11 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <?php $aktivni = 'sprava'; require ROOT . 'app/view/components/navbar.php'; ?>
 
-<main class="container py-4">
+<main class="container py-4 flex-grow-1">
     <h1 class="mb-4"><?= $jeAdmin ? 'Správa péče' : 'Moje péče' ?></h1>
     <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
     <?php if ($uspech): ?>
@@ -209,5 +209,7 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y', strtotime($d)) : '';
         </div>
     </div>
 </main>
+<?php require ROOT . 'app/view/components/footer.php'; ?>
+
 </body>
 </html>

@@ -1,40 +1,40 @@
 <?php
-
 namespace App\Model;
 
 use App\Core\Database;
 
-class ProblemModel {
+class ProblemModel{
     private Database $db;
 
-    public function __construct() {
+    public function __construct(){
         $this->db = new Database();
     }
 
-    public function typy(): array {
+    public function typy(): array{
         return $this->db->select(
             'SELECT id_typ_problemu, nazev FROM typ_problemu ORDER BY id_typ_problemu'
         );
     }
 
-    public function typExistuje(int $id): bool {
+    public function typExistuje(int $id): bool{
         return count($this->db->select(
             'SELECT 1 FROM typ_problemu WHERE id_typ_problemu = :id', [':id' => $id]
-        )) > 0;
+            )) > 0;
     }
 
-    public function otevrene(int $idZvirata): array {
+    public function otevrene(int $idZvirata): array{
         return $this->db->select(
             'SELECT p.id_problemu, p.nahlaseno, t.nazev, z.jmeno, z.prijmeni
              FROM problem_zvirete p
              JOIN typ_problemu t ON t.id_typ_problemu = p.id_typ_problemu
-             LEFT JOIN zamestnanci z ON z.ID_zamestnance = p.id_zamestnance
+             LEFT JOIN uzivatele z ON z.id_uzivatele = p.id_zamestnance
              WHERE p.id_zvirata = :id AND p.vyreseno IS NULL
              ORDER BY p.nahlaseno DESC, p.id_problemu DESC',
             [':id' => $idZvirata]
         );
     }
 
+    /** Posledních pár vyřešených problémů zvířete (historie). */
     public function vyresene(int $idZvirata, int $limit = 5): array
     {
         return $this->db->select(
@@ -48,6 +48,7 @@ class ProblemModel {
         );
     }
 
+    /** Počty neřešených problémů podle zvířat: [id_zvirata => počet]. */
     public function poctyOtevrenych(): array
     {
         $radky = $this->db->select(
@@ -68,6 +69,7 @@ class ProblemModel {
         );
     }
 
+    /** Označí problém u daného zvířete jako vyřešený. Vrací false, když už vyřešený byl nebo neexistuje. */
     public function vyresit(int $idProblemu, int $idZvirata): bool
     {
         return $this->db->execute(

@@ -21,7 +21,7 @@ class PeceModel {
             'SELECT pe.ID_pece, pe.datum_od, pe.datum_do, pe.typ_pece, t.nazev_typu,
                     z.jmeno, z.prijmeni, r.role_zam, zv.jmeno_zvirete, pav.jmeno_pavilonu
              FROM pece pe
-             JOIN zamestnanci z ON z.ID_zamestnance = pe.ID_zamestnance
+             JOIN uzivatele z ON z.id_uzivatele = pe.ID_zamestnance
              JOIN role_zam r ON r.id_role = z.id_role
              JOIN zvirata zv ON zv.id_zvirata = pe.ID_zvirata
              LEFT JOIN pavilon pav ON pav.ID_pavilon = zv.pavilon

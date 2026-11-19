@@ -17,11 +17,11 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <?php $aktivni = 'prehled'; require ROOT . 'app/view/components/navbar.php'; ?>
 
-<main class="container py-4" style="max-width: 52rem;">
+<main class="container py-4 flex-grow-1" style="max-width: 52rem;">
     <p class="mb-2"><a href="index.php"><i class="fa-solid fa-arrow-left me-1"></i>Zpět na přehled</a></p>
     <h1 class="mb-1"><?= htmlspecialchars($zvire['jmeno_zvirete']) ?></h1>
     <p class="text-body-secondary mb-4">
@@ -50,12 +50,14 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
                             · <?= htmlspecialchars($cz($p['nahlaseno'])) ?>
                         </small>
                     </div>
-                    <form method="post" action="index.php?page=zvire&amp;id=<?= (int) $zvire['id_zvirata'] ?>">
-                        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
-                        <input type="hidden" name="akce" value="vyresit_problem">
-                        <input type="hidden" name="id_problemu" value="<?= (int) $p['id_problemu'] ?>">
-                        <button type="submit" class="btn btn-outline-success btn-sm"><i class="fa-solid fa-check me-1"></i>Vyřešeno</button>
-                    </form>
+                    <?php if ($muzeVyresit): ?>
+                        <form method="post" action="index.php?page=zvire&amp;id=<?= (int) $zvire['id_zvirata'] ?>">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                            <input type="hidden" name="akce" value="vyresit_problem">
+                            <input type="hidden" name="id_problemu" value="<?= (int) $p['id_problemu'] ?>">
+                            <button type="submit" class="btn btn-outline-success btn-sm"><i class="fa-solid fa-check me-1"></i>Vyřešeno</button>
+                        </form>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
             <?php if (!$otevrene): ?>
@@ -90,5 +92,7 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
         </div>
     </section>
 </main>
+<?php require ROOT . 'app/view/components/footer.php'; ?>
+
 </body>
 </html>

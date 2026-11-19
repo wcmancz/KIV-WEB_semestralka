@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Core\BaseController;
+use App\Model\UzivatelModel;
 use App\Model\ZamestnanecModel;
 use App\Model\ZvireModel;
 
@@ -21,7 +22,7 @@ class PridatController extends BaseController {
 
         $chybyZam = [];
         $chybyZvire = [];
-        $oldZam = ['jmeno' => '', 'prijmeni' => '', 'vek' => '', 'id_role' => 0, 'login' => ''];
+        $oldZam = ['jmeno' => '', 'prijmeni' => '', 'vek' => '', 'id_role' => 0, 'email' => '', 'login' => ''];
         $oldZvire = ['jmeno' => '', 'pavilon' => 0, 'potrava' => 0];
 
         $uspech = $_SESSION['flash'] ?? '';
@@ -66,12 +67,13 @@ class PridatController extends BaseController {
             'prijmeni' => trim((string) ($_POST['prijmeni'] ?? '')),
             'vek'      => trim((string) ($_POST['vek'] ?? '')),
             'id_role'  => (int) ($_POST['id_role'] ?? 0),
+            'email'    => trim((string) ($_POST['email'] ?? '')),
             'login'    => trim((string) ($_POST['login'] ?? '')),
         ];
         $heslo  = (string) ($_POST['heslo'] ?? '');
         $heslo2 = (string) ($_POST['heslo2'] ?? '');
 
-        $chyby = $this->zkontrolujZamestnance($old, $heslo, $heslo2, $role, $model);
+        $chyby = $this->zkontrolujZamestnance($old, $heslo, $heslo2, $role);
 
         if (!$chyby) {
             try {
@@ -80,6 +82,7 @@ class PridatController extends BaseController {
                     $old['prijmeni'],
                     (int) $old['vek'],
                     $old['id_role'],
+                    $old['email'],
                     $old['login'],
                     password_hash($heslo, PASSWORD_DEFAULT)
                 );
@@ -89,7 +92,7 @@ class PridatController extends BaseController {
                 if ($e->getCode() !== '23000') {
                     throw $e;
                 }
-                $chyby['login'] = 'Toto přihlašovací jméno je už obsazené.';
+                $chyby['login'] = 'Toto přihlašovací jméno nebo e-mail je už obsazené.';
             }
         }
         return [$old, $chyby];
@@ -220,7 +223,7 @@ class PridatController extends BaseController {
     }
 
 
-    private function ZkontrolujZamestnance(array $d, string $heslo, string $heslo2, array $role, ZamestnanecModel $model): array
+    private function zkontrolujZamestnance(array $d, string $heslo, string $heslo2, array $role): array
     {
         $chyby = [];
 
@@ -243,8 +246,14 @@ class PridatController extends BaseController {
 
         if(!preg_match('/^[A-Za-z0-9._-]{3,50}$/', $d['login'])) {
             $chyby['login'] = 'Přihlašovací jméno má mít 3 až 50 znaků (písmena bez diakritiky, čísla, tečka, pomlčka a podtržítko).';
-        } elseif ($model->loginExistuje($d['login'])) {
+        } elseif ((new UzivatelModel())->existujeLogin($d['login'])) {
             $chyby['login'] = 'Toto přihlašovací jméno je již zabrané.';
+        }
+
+        if ($d['email'] === '' || mb_strlen($d['email']) > 100 || !filter_var($d['email'], FILTER_VALIDATE_EMAIL)) {
+            $chyby['email'] = 'Zadejte platný e-mail (nejvýše 100 znaků).';
+        } elseif ((new UzivatelModel())->existujeEmail($d['email'])) {
+            $chyby['email'] = 'Účet s tímto e-mailem už existuje.';
         }
 
         if (mb_strlen($heslo) < 8) {

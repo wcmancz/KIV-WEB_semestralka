@@ -26,10 +26,12 @@ class RegisterController extends BaseController
         $chyby = [];     // chyby podle políčka: $chyby['email'] = '...'
         $jmeno = '';     // hodnoty se vracejí do formuláře, aby je uživatel při chybě nemusel psát znovu
         $email = '';
+        $login = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $jmeno  = trim($_POST['jmeno'] ?? '');
             $email  = trim($_POST['email'] ?? '');
+            $login  = trim($_POST['login'] ?? '');
             $heslo  = $_POST['heslo'] ?? '';
             $heslo2 = $_POST['heslo2'] ?? '';
 
@@ -49,6 +51,12 @@ class RegisterController extends BaseController
                 $chyby['email'] = 'Účet s tímto e-mailem už existuje.';
             }
 
+            if (!preg_match('/^[A-Za-z0-9._-]{3,50}$/', $login)) {
+                $chyby['login'] = 'Přihlašovací jméno má mít 3 až 50 znaků (písmena bez diakritiky, čísla, tečka, pomlčka a podtržítko).';
+            } elseif ($model->existujeLogin($login)) {
+                $chyby['login'] = 'Toto přihlašovací jméno je už obsazené.';
+            }
+
             if (mb_strlen($heslo) < 8) {
                 $chyby['heslo'] = 'Heslo musí mít alespoň 8 znaků.';
             }
@@ -60,13 +68,13 @@ class RegisterController extends BaseController
             // Bez chyb se účet uloží a uživatel se přesměruje na přihlášení.
             if (!$chyby) {
                 try {
-                    $model->vytvor($jmeno, $email, $heslo);       // uložení provede MODEL
+                    $model->vytvorNavstevnika($jmeno, $email, $login, $heslo);       // uložení provede MODEL
                     $_SESSION['flash'] = 'Účet byl vytvořen. Nyní se můžete přihlásit.';
                     header('Location: index.php?page=login');
                     exit;
                 } catch (PDOException $e) {
                     if ($e->getCode() === '23000') {
-                        $chyby['email'] = 'Účet s tímto e-mailem už existuje.';
+                        $chyby['email'] = 'Účet s tímto e-mailem nebo přihlašovacím jménem už existuje.';
                     } else {
                         throw $e;
                     }

@@ -14,14 +14,14 @@ if (!defined('ROOT')) {
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <?php $aktivni = 'prehled'; require ROOT . 'app/view/components/navbar.php'; ?>
 
-<main class="container py-4" style="max-width: 52rem;">
+<main class="container py-4 flex-grow-1" style="max-width: 52rem;">
     <h1 class="mb-4">Naše zvířata</h1>
 
-    <?php if ($user && $user['typ'] === 'zamestnanec'): ?>
+    <?php if ($this->jeZamestnanec()): ?>
         <div class="alert alert-warning" role="alert">
             <i class="fa-solid fa-circle-info me-2"></i>
             <?php $n = count($sluzby); ?>
@@ -43,7 +43,7 @@ if (!defined('ROOT')) {
                     <?php $moje = $sluzby[$z['id_zvirata']] ?? []; ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center gap-2<?= $moje ? ' list-group-item-warning' : '' ?>">
                         <div>
-                            <?php if ($user && $user['typ'] === 'zamestnanec'): ?>
+                            <?php if ($this->jeZamestnanec()): ?>
                                 <a class="fw-semibold text-decoration-none" href="index.php?page=zvire&amp;id=<?= (int) $z['id_zvirata'] ?>"><?= htmlspecialchars($z['jmeno_zvirete']) ?></a>
                             <?php else: ?>
                                 <span class="fw-semibold"><?= htmlspecialchars($z['jmeno_zvirete']) ?></span>
@@ -65,5 +65,6 @@ if (!defined('ROOT')) {
         </div>
     <?php endforeach; ?>
 </main>
+<?php require ROOT . 'app/view/components/footer.php'; ?>
 </body>
 </html>

@@ -40,6 +40,12 @@ $neplatne = fn(string $pole): string => isset($chyby[$pole]) ? ' is-invalid' : '
                             <?php if (isset($chyby['email'])): ?><div class="invalid-feedback"><?= htmlspecialchars($chyby['email']) ?></div><?php endif; ?>
                         </div>
                         <div class="mb-3">
+                            <label for="login" class="form-label">Přihlašovací jméno</label>
+                            <input type="text" class="form-control<?= $neplatne('login') ?>" id="login" name="login" value="<?= htmlspecialchars($login) ?>" maxlength="50" autocomplete="username" required>
+                            <?php if (isset($chyby['login'])): ?><div class="invalid-feedback"><?= htmlspecialchars($chyby['login']) ?></div><?php endif; ?>
+                            <div class="form-text">Přihlásit se pak můžete jménem i e-mailem.</div>
+                        </div>
+                        <div class="mb-3">
                             <label for="heslo" class="form-label">Heslo</label>
                             <input type="password" class="form-control<?= $neplatne('heslo') ?>" id="heslo" name="heslo" minlength="8" autocomplete="new-password" required>
                             <?php if (isset($chyby['heslo'])): ?><div class="invalid-feedback"><?= htmlspecialchars($chyby['heslo']) ?></div><?php endif; ?>

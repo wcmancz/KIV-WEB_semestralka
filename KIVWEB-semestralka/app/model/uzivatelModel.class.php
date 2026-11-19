@@ -15,11 +15,14 @@ class UzivatelModel
         $this->db = new Database();
     }
 
-    public function podleEmailu(string $email): ?array
+    public function podleLoginuNeboEmailu(string $identifikator): ?array
     {
         $radky = $this->db->select(
-            'SELECT id_uzivatele, jmeno, heslo FROM uzivatele WHERE email = :email',
-            [':email' => $email]
+            'SELECT u.id_uzivatele, u.jmeno, u.prijmeni, u.heslo, r.role_zam
+             FROM uzivatele u JOIN role_zam r ON r.id_role = u.id_role
+             WHERE u.login = :login OR u.email = :email
+             LIMIT 1',
+            [':login' => $identifikator, ':email' => $identifikator]
         );
         return $radky[0] ?? null;
     }
@@ -31,12 +34,22 @@ class UzivatelModel
         return count($radky) > 0;
     }
 
-    /** Uloží nového návštěvníka. Heslo se ukládá jen jako hash, nikdy jako text. */
-    public function vytvor(string $jmeno, string $email, string $heslo): void
+    public function existujeLogin(string $login): bool
+    {
+        return $this->db->select('SELECT 1 FROM uzivatele WHERE login = :login', [':login' => $login]) !== [];
+    }
+
+    public function vytvorNavstevnika(string $jmeno, string $email, string $login, string $heslo): void
     {
         $this->db->execute(
-            'INSERT INTO uzivatele (jmeno, email, heslo) VALUES (:jmeno, :email, :heslo)',
-            [':jmeno' => $jmeno, ':email' => $email, ':heslo' => password_hash($heslo, PASSWORD_DEFAULT)]
+            'INSERT INTO uzivatele (jmeno, email, login, heslo, id_role)
+             VALUES (:jmeno, :email, :login, :heslo, (SELECT id_role FROM role_zam WHERE role_zam = \'navstevnik\' LIMIT 1))',
+            [
+                ':jmeno' => $jmeno,
+                ':email' => $email,
+                ':login' => $login,
+                ':heslo' => password_hash($heslo, PASSWORD_DEFAULT),
+            ]
         );
     }
 }

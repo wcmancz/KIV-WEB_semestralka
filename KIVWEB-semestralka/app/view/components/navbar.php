@@ -12,7 +12,7 @@ $jeAdmin = $user && in_array($user['role'] ?? '', ['admin', 'superadmin'], true)
             <li class="nav-item">
                 <a class="nav-link<?= $aktivni === 'prehled' ? ' active' : '' ?>" href="index.php">Přehled zvířat</a>
             </li>
-            <?php if ($user && $user['typ'] === 'zamestnanec'): ?>
+            <?php if ($this->jeZamestnanec()): ?>
                 <li class="nav-item">
                     <a class="nav-link<?= $aktivni === 'sprava' ? ' active' : '' ?>" href="index.php?page=admin"><?= $jeAdmin ? 'Správa péče' : 'Moje péče' ?></a>
                 </li>
@@ -27,7 +27,7 @@ $jeAdmin = $user && in_array($user['role'] ?? '', ['admin', 'superadmin'], true)
             <?php if ($user): ?>
                 <span class="text-end lh-sm">
                     <?= htmlspecialchars($user['jmeno']) ?>
-                    <?php if ($user['typ'] === 'zamestnanec'): ?>
+                    <?php if ($this->jeZamestnanec()): ?>
                         <small class="d-block text-white-50"><?= htmlspecialchars($user['role']) ?></small>
                     <?php endif; ?>
                 </span>

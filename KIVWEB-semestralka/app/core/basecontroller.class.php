@@ -7,6 +7,11 @@ abstract class BaseController{
         return $_SESSION['user'] ?? null;
     }
 
+    protected function jeZamestnanec(): bool {
+        $user = $this->user();
+        return $user !== null && $user['role'] !== 'navstevnik';
+    }
+
     protected function vyzadatRoli(array $povoleneRole): void {
         $user = $this->user();
 

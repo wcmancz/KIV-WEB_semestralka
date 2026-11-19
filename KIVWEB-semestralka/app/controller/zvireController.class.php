@@ -6,16 +6,18 @@ use App\Core\BaseController;
 use App\Model\ProblemModel;
 use App\Model\ZvireModel;
 
-class ZvireController extends BaseController {
-    public function detail(): void {
+class ZvireController extends BaseController
+{
+    public function detail(): void
+    {
         $this->vyzadatRoli(['superadmin', 'admin', 'zamestnanec', 'brigadnik']);
         $user = $this->user();
 
-        $id = (int)($_GET['id'] ?? 0);
+        $id = (int) ($_GET['id'] ?? 0);
         $zvire = (new ZvireModel())->detail($id);
-        if($zvire === null){
+        if ($zvire === null) {
             http_response_code(404);
-            exit('Zvíře nenalezeno');
+            exit('Zvíře nenalezeno.');
         }
 
         $problemy = new ProblemModel();
@@ -30,17 +32,19 @@ class ZvireController extends BaseController {
             switch ($_POST['akce'] ?? '') {
                 case 'pridat_problem':
                     $typ = (int) ($_POST['id_typ_problemu'] ?? 0);
-                    if(!$problemy->typExistuje($typ)) {
+                    if (!$problemy->typExistuje($typ)) {
                         $this->presmeruj($id, null, 'Vyberte typ problému ze seznamu.');
                     }
                     $problemy->pridat($id, $typ, (int) $user['id']);
                     $this->presmeruj($id, 'Problém byl nahlášen.');
                     break;
+
                 case 'vyresit_problem':
+                    $this->vyzadatRoli(['superadmin', 'admin', 'zamestnanec']);
                     $ok = $problemy->vyresit((int) ($_POST['id_problemu'] ?? 0), $id);
-                    $this->presmeruj($id, $ok ? 'Problém byl označen jako vyřešený.' : null,
-                        $ok ? null : 'Problém se nepodařilo označit jako vyřešený.');
+                    $this->presmeruj($id, $ok ? 'Problém byl označen jako vyřešený.' : null, $ok ? null : 'Problém se nepodařilo označit jako vyřešený.');
                     break;
+
                 default:
                     http_response_code(400);
                     exit('Neznámá akce');
@@ -51,10 +55,13 @@ class ZvireController extends BaseController {
         $otevrene = $problemy->otevrene($id);
         $vyresene = $problemy->vyresene($id);
 
+        $muzeVyresit = $user['role'] !== 'brigadnik';
+
         $csrf = $this->csrfToken();
         require ROOT . 'app/view/zvire.php';
     }
 
+    /** Uloží zprávu do session a přesměruje zpět na detail (po odeslání formuláře se stránka nenačte znovu POSTem). */
     private function presmeruj(int $id, ?string $uspech = null, ?string $chyba = null): void
     {
         if ($uspech !== null) {
