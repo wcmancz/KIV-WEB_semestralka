@@ -9,7 +9,7 @@ class StatistikyController extends BaseController
 {
     public function statistiky(): void
     {
-        $this->vyzadatAdmina();
+        $this->vyzadatRoli(['superadmin', 'admin', 'zamestnanec']);   // správce
         $user = $this->user();
 
         $model = new StatistikyModel();
@@ -20,7 +20,6 @@ class StatistikyController extends BaseController
         $druhy = $model->podleDruhu();
         $pavilony = $model->podlePavilonu();
 
-        // Délka sloupců v grafech: nejvyšší hodnota = 100 % (view jen vypisuje).
         $max = fn(array $radky, string $klic): int => max(1, ...array_map(fn(array $r) => (int) $r[$klic], $radky ?: [[$klic => 1]]));
         $maxDruh = $max($druhy, 'celkem');
         $maxZvire = $max($zvirata, 'zaznamu');

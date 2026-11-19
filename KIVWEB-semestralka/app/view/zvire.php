@@ -19,10 +19,10 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<?php $aktivni = 'prehled'; require ROOT . 'app/view/components/navbar.php'; ?>
+<?php require ROOT . 'app/view/components/navbar.php'; ?>
 
 <main class="container py-4 flex-grow-1" style="max-width: 52rem;">
-    <p class="mb-2"><a href="index.php"><i class="fa-solid fa-arrow-left me-1"></i>Zpět na přehled</a></p>
+    <p class="mb-2"><a href="<?= htmlspecialchars($zpetUrl) ?>"><i class="fa-solid fa-arrow-left me-1"></i><?= htmlspecialchars($zpetText) ?></a></p>
     <h1 class="mb-1"><?= htmlspecialchars($zvire['jmeno_zvirete']) ?></h1>
     <p class="text-body-secondary mb-4">
         <?= htmlspecialchars($zvire['jmeno_pavilonu'] ?? 'Bez pavilonu') ?><?= $zvire['lokace'] ? ', ' . htmlspecialchars($zvire['lokace']) : '' ?>
@@ -98,7 +98,6 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
 </main>
 
 <script>
-    // Pole „Popište problém“ se ukáže jen při výběru typu „Ostatní“ (kontrolu provádí i server).
     (function () {
         var select = document.getElementById('id_typ_problemu');
         var blok = document.getElementById('popis-blok');

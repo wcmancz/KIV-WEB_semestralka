@@ -25,7 +25,6 @@ if (!defined('ROOT')) {
         <?= $jeSuperadmin ? 'Jako superadmin můžete spravovat i administrátory.' : 'Administrátory smí upravit jen superadmin.' ?>
     </p>
 
-    <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
     <?php if ($uspech): ?>
         <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
     <?php endif; ?>
@@ -33,7 +32,6 @@ if (!defined('ROOT')) {
         <div class="alert alert-danger" role="alert"><?= htmlspecialchars($chybaAkce) ?></div>
     <?php endif; ?>
 
-    <?php /* Nový zaměstnanec: formulář je sbalený a otevře se sám, když se po odeslání zobrazí chyby. */ ?>
     <details class="mb-4"<?= $chybyZam ? ' open' : '' ?>>
         <summary class="btn btn-primary mb-3"><i class="fa-solid fa-user-plus me-1"></i>Nový zaměstnanec</summary>
         <form method="post" action="index.php?page=uzivatele" class="card shadow-sm mb-4" novalidate>
@@ -135,7 +133,7 @@ if (!defined('ROOT')) {
 
     <div class="card shadow-sm">
         <div class="table-responsive">
-            <table class="table align-middle mb-0">
+            <table class="table table-karty align-middle mb-0">
                 <thead class="table-light">
                 <tr>
                     <th scope="col">Uživatel</th>
@@ -156,7 +154,7 @@ if (!defined('ROOT')) {
                             <small class="d-block text-body-secondary"><?= htmlspecialchars($u['login']) ?> · <?= htmlspecialchars($u['email']) ?></small>
                         </td>
 
-                        <td>
+                        <td data-label="Role">
                             <?php if ($u['duvod'] === null): ?>
                                 <form method="post" action="<?= htmlspecialchars($akceUrl) ?>" class="d-flex gap-2">
                                     <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">

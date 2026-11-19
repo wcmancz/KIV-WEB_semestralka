@@ -21,7 +21,6 @@ if (!defined('ROOT')) {
 <main class="container py-4 flex-grow-1">
     <h1 class="mb-4">Zvířata</h1>
 
-    <?php /* Zprávy po provedené akci (zelená = povedlo se, červená = nepovedlo se). */ ?>
     <?php if ($uspech): ?>
         <div class="alert alert-success" role="alert"><?= htmlspecialchars($uspech) ?></div>
     <?php endif; ?>
@@ -29,7 +28,6 @@ if (!defined('ROOT')) {
         <div class="alert alert-danger" role="alert"><?= htmlspecialchars($chybaAkce) ?></div>
     <?php endif; ?>
 
-    <?php /* Jeden formulář: přidání nového zvířete, nebo úprava vybraného (po kliknutí na tužku v tabulce). */ ?>
     <form method="post" action="<?= htmlspecialchars($akceUrl) ?>" class="card shadow-sm mb-5" id="formular" novalidate style="scroll-margin-top: 5rem;">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
         <input type="hidden" name="akce" value="<?= $upravovane > 0 ? 'upravit_zvire' : 'nove_zvire' ?>">
@@ -82,7 +80,7 @@ if (!defined('ROOT')) {
                             <label class="list-group-item d-flex align-items-center gap-2">
                                 <input class="form-check-input flex-shrink-0 mt-0" type="radio" name="pavilon"
                                        value="<?= (int) $pav['ID_pavilon'] ?>"
-                                    <?= $old['pavilon'] === (int) $pav['ID_pavilon'] ? 'checked' : '' ?>>
+                                        <?= $old['pavilon'] === (int) $pav['ID_pavilon'] ? 'checked' : '' ?>>
                                 <span class="lh-sm flex-grow-1">
                                     <span class="fw-semibold"><?= htmlspecialchars($pav['jmeno_pavilonu']) ?></span>
                                     <small class="d-block text-body-secondary"><?= htmlspecialchars($pav['lokace']) ?> · <?= number_format((float) $pav['rozloha'], 0, ',', ' ') ?> m²</small>
@@ -140,7 +138,7 @@ if (!defined('ROOT')) {
 
     <div class="card shadow-sm">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-karty table-hover align-middle mb-0">
                 <thead class="table-light">
                 <tr>
                     <th scope="col">Zvíře</th>
@@ -157,10 +155,10 @@ if (!defined('ROOT')) {
 
                 <?php foreach ($seznam as $z): ?>
                     <tr<?= (int) $z['id_zvirata'] === $upravovane ? ' class="table-active"' : '' ?>>
-                        <td><a class="fw-semibold text-decoration-none" href="index.php?page=zvire&amp;id=<?= (int) $z['id_zvirata'] ?>"><?= htmlspecialchars($z['jmeno_zvirete']) ?></a></td>
-                        <td><?= htmlspecialchars($z['jmeno_pavilonu'] ?? 'bez pavilonu') ?></td>
-                        <td><?= htmlspecialchars($z['typ_potravy'] ?? '–') ?></td>
-                        <td><?= (int) $z['pocet_pece'] ?></td>
+                        <td class="karta-nadpis"><a class="fw-semibold text-decoration-none" href="index.php?page=zvire&amp;id=<?= (int) $z['id_zvirata'] ?>"><?= htmlspecialchars($z['jmeno_zvirete']) ?></a></td>
+                        <td data-label="Pavilon"><?= htmlspecialchars($z['jmeno_pavilonu'] ?? 'bez pavilonu') ?></td>
+                        <td data-label="Potrava"><?= htmlspecialchars($z['typ_potravy'] ?? '–') ?></td>
+                        <td data-label="Péče"><?= (int) $z['pocet_pece'] ?></td>
                         <td class="cell-actions text-end text-nowrap">
                             <a href="<?= htmlspecialchars($akceUrl . '&upravit=' . (int) $z['id_zvirata'] . '#formular') ?>" class="btn btn-sm btn-outline-primary" title="Upravit zvíře"><i class="fa-solid fa-pen"></i></a>
 

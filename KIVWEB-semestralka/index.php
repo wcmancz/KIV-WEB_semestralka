@@ -1,14 +1,9 @@
 <?php
-/*
- * vstupní bod webu (rozcestník) a úvodní stránka s přehledem zvířat.
- * každá stránka se otvírá přes tento soubor podle toho co říká parametr ?page=
- */
+
 const ROOT = __DIR__ . '/';
 
-// Jediný ruční require pro třídy. Autoloader pak při prvním použití třídy (new Database)
 require ROOT . 'app/core/autoloader.inc.php';
 
-// Samotné `use` nic nenačítá, třída se načte až ve chvíli, kdy ji poprvé použijeme.
 use App\Config\Config;
 use App\Controller\RegisterController;
 use App\Controller\LoginController;
@@ -16,6 +11,7 @@ use App\Controller\UvodController;
 use App\Controller\PeceController;
 use App\Controller\ZvireController;
 use App\Controller\DnesController;
+use App\Controller\RezervaceController;
 use App\Controller\StatistikyController;
 use App\Controller\UzivateleController;
 
@@ -55,6 +51,9 @@ switch ($page) {
         break;
     case 'statistiky':
         (new StatistikyController())->statistiky();
+        break;
+    case 'rezervace':
+        (new RezervaceController())->rezervace();
         break;
     case 'dnes':
         (new DnesController())->dnes();

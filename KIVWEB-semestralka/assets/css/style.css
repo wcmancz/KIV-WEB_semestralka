@@ -62,3 +62,15 @@
 .table > :not(caption) > * > * { padding-block: .8rem; }
 
 .table-responsive { position: relative; }
+
+@media (max-width: 767.98px) {
+    .table-karty thead { display: none; }
+    .table-karty, .table-karty tbody { display: block; }
+    .table-karty tr { display: block; padding: .6rem .9rem; border-bottom: 1px solid var(--bs-border-color); }
+    .table-karty tr:last-child { border-bottom: 0; }
+    .table-karty td { display: block; border: 0; padding: .2rem 0 !important; text-align: left !important; white-space: normal !important; }
+    .table-karty td[data-label]::before { content: attr(data-label) ": "; font-size: .8rem; color: var(--bs-secondary-color); }
+    .table-karty td[data-label="Návštěvník"]::before, .table-karty td[data-label="Stav"]::before, .table-karty td[data-label="Role"]::before { display: block; }
+    .table-karty td.cell-actions { padding-top: .5rem !important; }
+    .table-karty td[colspan] { text-align: center !important; }
+}

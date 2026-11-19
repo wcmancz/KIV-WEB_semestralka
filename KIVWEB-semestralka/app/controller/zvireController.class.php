@@ -1,9 +1,5 @@
 <?php
-/*
- * Vše kolem zvířat v jednom controlleru:
- *   detail()  – ?page=zvire&id=…   detail zvířete a problémy hlášené zaměstnanci (vidí a spravují je jen zaměstnanci)
- *   sprava()  – ?page=zvirata      přidání, úprava a odebrání zvířete (jen admin a superadmin)
- */
+
 namespace App\Controller;
 
 use App\Core\BaseController;
@@ -74,10 +70,51 @@ class ZvireController extends BaseController
         $muzeVyresit = $user['role'] !== 'brigadnik';
 
         $csrf = $this->csrfToken();
+        [$zpetUrl, $zpetText, $aktivni] = $this->kamZpet();
         require ROOT . 'app/view/zvire.php';
     }
 
-    /** Uloží zprávu do session a přesměruje zpět na detail (po odeslání formuláře se stránka nenačte znovu POSTem). */
+    /** Stránky, ze kterých se na detail chodí, a text odkazu „zpět“ pro každou z nich. */
+    private const ODKUD = [
+        'admin'      => ['Zpět na správu péče', 'sprava'],
+        'zvirata'    => ['Zpět na zvířata', 'zvirata'],
+        'dnes'       => ['Zpět na dnešní přehled', 'dnes'],
+        'statistiky' => ['Zpět na statistiky', 'statistiky'],
+    ];
+
+    private function kamZpet(): array
+    {
+        $vychozi = ['index.php', 'Zpět na přehled', 'prehled'];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $ref = parse_url((string) ($_SERVER['HTTP_REFERER'] ?? ''));
+            $mojeHost = $_SERVER['HTTP_HOST'] ?? '';
+            $hostRef = ($ref['host'] ?? '') . (isset($ref['port']) ? ':' . $ref['port'] : '');
+
+            if ($ref && $hostRef === $mojeHost) {
+                parse_str($ref['query'] ?? '', $q);
+                $stranka = is_string($q['page'] ?? null) ? $q['page'] : '';
+                if (isset(self::ODKUD[$stranka])) {
+                    $_SESSION['zpet_zvire'] = 'index.php?' . http_build_query($q);
+                } elseif ($stranka !== 'zvire') {      // přišel odjinud (např. z přehledu): vrací se na přehled
+                    unset($_SESSION['zpet_zvire']);
+                }
+            } else {
+                unset($_SESSION['zpet_zvire']);
+            }
+        }
+
+        $ulozeno = $_SESSION['zpet_zvire'] ?? '';
+        if (is_string($ulozeno) && $ulozeno !== '') {
+            parse_str((string) parse_url($ulozeno, PHP_URL_QUERY), $q);
+            $stranka = is_string($q['page'] ?? null) ? $q['page'] : '';
+            if (isset(self::ODKUD[$stranka])) {
+                return [$ulozeno, self::ODKUD[$stranka][0], self::ODKUD[$stranka][1]];
+            }
+        }
+        return $vychozi;
+    }
+
     private function presmerujNaDetail(int $id, ?string $uspech = null, ?string $chyba = null): void
     {
         if ($uspech !== null) {
@@ -90,11 +127,9 @@ class ZvireController extends BaseController
         exit;
     }
 
-    // ---------- správa zvířat (admin) ----------
-
     public function sprava(): void
     {
-        $this->vyzadatAdmina();
+        $this->vyzadatRoli(['superadmin', 'admin', 'zamestnanec']);
         $user = $this->user();
         $model = new ZvireModel();
 
@@ -198,7 +233,6 @@ class ZvireController extends BaseController
         return null;
     }
 
-    /** Zpráva po akci a návrat na stejný výpis. */
     private function presmerujNaSpravu(?string $uspech, ?string $chyba, string $q, int $pavilon): void
     {
         if ($chyba === null) {
