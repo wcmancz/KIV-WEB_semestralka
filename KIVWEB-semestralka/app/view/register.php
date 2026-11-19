@@ -30,7 +30,7 @@ $neplatne = fn(string $pole): string => isset($chyby[$pole]) ? ' is-invalid' : '
                         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
                         <?php if (isset($chyby['formular'])): ?><div class="alert alert-danger" role="alert"><?= htmlspecialchars($chyby['formular']) ?></div><?php endif; ?>
                         <div class="mb-3">
-                            <label for="jmeno" class="form-label">Jméno</label>
+                            <label for="jmeno" class="form-label">Jméno a příjmení</label>
                             <input type="text" class="form-control<?= $neplatne('jmeno') ?>" id="jmeno" name="jmeno" value="<?= htmlspecialchars($jmeno) ?>" maxlength="50" autocomplete="name" required autofocus>
                             <?php if (isset($chyby['jmeno'])): ?><div class="invalid-feedback"><?= htmlspecialchars($chyby['jmeno']) ?></div><?php endif; ?>
                         </div>

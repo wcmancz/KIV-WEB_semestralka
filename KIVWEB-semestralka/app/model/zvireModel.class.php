@@ -23,7 +23,7 @@ class ZvireModel{
     public function pavilonyAZvirata(): array
     {
         $radky = $this->db->select(
-        'SELECT pav.ID_pavilon, pav.jmeno_pavilonu, pav.lokace, pav.rozloha,
+            'SELECT pav.ID_pavilon, pav.jmeno_pavilonu, pav.lokace, pav.rozloha,
             z.id_zvirata, z.jmeno_zvirete, p.typ_potravy
             FROM pavilon pav
             LEFT JOIN zvirata z ON z.pavilon = pav.ID_pavilon
@@ -72,6 +72,49 @@ class ZvireModel{
             (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zvirata = z.id_zvirata) AS pocet_pece
             FROM zvirata z LEFT JOIN pavilon pav ON pav.ID_pavilon = z.pavilon
             ORDER BY z.jmeno_zvirete'
+        );
+    }
+
+    /** Seznam zvířat pro správu: $q hledá ve jménu, pavilonu a potravě, $pavilon (0 = všechny) omezí na jeden pavilon. */
+    public function hledat(string $q = '', int $pavilon = 0): array
+    {
+        $kde = [];
+        $params = [];
+        if ($q !== '') {
+            $kde[] = '(z.jmeno_zvirete LIKE :q1 OR pav.jmeno_pavilonu LIKE :q2 OR p.typ_potravy LIKE :q3)';
+            $params[':q1'] = $params[':q2'] = $params[':q3'] = '%' . addcslashes($q, '%_\\') . '%';
+        }
+        if ($pavilon > 0) {
+            $kde[] = 'z.pavilon = :pavilon';
+            $params[':pavilon'] = $pavilon;
+        }
+        return $this->db->select(
+            'SELECT z.id_zvirata, z.jmeno_zvirete, pav.jmeno_pavilonu, p.typ_potravy,
+                    (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zvirata = z.id_zvirata) AS pocet_pece
+             FROM zvirata z
+             LEFT JOIN pavilon pav ON pav.ID_pavilon = z.pavilon
+             LEFT JOIN potrava p ON p.ID_potrava = z.potrava
+             ' . ($kde ? 'WHERE ' . implode(' AND ', $kde) : '') . '
+             ORDER BY z.jmeno_zvirete, z.id_zvirata',
+            $params
+        );
+    }
+
+    /** Zvíře včetně ID pavilonu a potravy (pro předvyplnění formuláře úpravy), nebo null. */
+    public function proUpravu(int $id): ?array
+    {
+        $radky = $this->db->select(
+            'SELECT id_zvirata, jmeno_zvirete, pavilon, potrava FROM zvirata WHERE id_zvirata = :id',
+            [':id' => $id]
+        );
+        return $radky[0] ?? null;
+    }
+
+    public function upravit(int $id, string $jmeno, int $pavilon, ?int $potrava): void
+    {
+        $this->db->execute(
+            'UPDATE zvirata SET jmeno_zvirete = :jmeno, pavilon = :pavilon, potrava = :potrava WHERE id_zvirata = :id',
+            [':jmeno' => $jmeno, ':pavilon' => $pavilon, ':potrava' => $potrava, ':id' => $id]
         );
     }
 

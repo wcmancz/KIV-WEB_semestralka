@@ -52,4 +52,52 @@ class UzivatelModel
             ]
         );
     }
+
+    /** Aktuální role přihlášeného uživatele (kontrola při každém požadavku), nebo null, když účet už neexistuje. */
+    public function stav(int $id): ?array
+    {
+        $radky = $this->db->select(
+            'SELECT r.role_zam FROM uzivatele u JOIN role_zam r ON r.id_role = u.id_role WHERE u.id_uzivatele = :id',
+            [':id' => $id]
+        );
+        return $radky[0] ?? null;
+    }
+
+    /** Všechny role (pro výběr role u uživatele). */
+    public function role(): array
+    {
+        return $this->db->select('SELECT id_role, role_zam FROM role_zam ORDER BY id_role');
+    }
+
+    private const VYBER = 'SELECT u.id_uzivatele, u.jmeno, u.prijmeni, u.login, u.email, u.id_role, u.vytvoreno, r.role_zam,
+                    (SELECT COUNT(*) FROM pece pe WHERE pe.ID_zamestnance = u.id_uzivatele) AS pocet_pece
+             FROM uzivatele u JOIN role_zam r ON r.id_role = u.id_role';
+
+    /** Všichni uživatelé včetně návštěvníků; $q hledá ve jménu, loginu, e-mailu a roli. */
+    public function hledat(string $q = ''): array
+    {
+        $params = [];
+        $kde = '';
+        if ($q !== '') {
+            $kde = " WHERE CONCAT_WS(' ', u.jmeno, u.prijmeni) LIKE :q1 OR u.login LIKE :q2 OR u.email LIKE :q3 OR r.role_zam LIKE :q4";
+            $params[':q1'] = $params[':q2'] = $params[':q3'] = $params[':q4'] = '%' . addcslashes($q, '%_\\') . '%';
+        }
+        return $this->db->select(self::VYBER . $kde . ' ORDER BY r.id_role, u.prijmeni, u.jmeno, u.id_uzivatele', $params);
+    }
+
+    public function podleId(int $id): ?array
+    {
+        $radky = $this->db->select(self::VYBER . ' WHERE u.id_uzivatele = :id', [':id' => $id]);
+        return $radky[0] ?? null;
+    }
+
+    public function zmenRoli(int $id, int $idRole): void
+    {
+        $this->db->execute('UPDATE uzivatele SET id_role = :role WHERE id_uzivatele = :id', [':role' => $idRole, ':id' => $id]);
+    }
+
+    public function smazat(int $id): bool
+    {
+        return $this->db->execute('DELETE FROM uzivatele WHERE id_uzivatele = :id', [':id' => $id]) > 0;
+    }
 }

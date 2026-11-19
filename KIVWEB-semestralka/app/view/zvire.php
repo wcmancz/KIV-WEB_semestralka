@@ -38,13 +38,13 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
 
     <section class="card shadow-sm mb-4 border-warning">
         <div class="card-header d-flex justify-content-between align-items-baseline">
-            <h2 class="h5 mb-0"><i class="fa-solid fa-triangle-exclamation me-2 text-warning"></i>Problémy (jen pro zaměstnance)</h2>
+            <h2 class="h5 mb-0"><i class="fa-solid fa-triangle-exclamation me-2 text-warning"></i>Problémy</h2>
         </div>
         <ul class="list-group list-group-flush">
             <?php foreach ($otevrene as $p): ?>
                 <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
-                        <span class="fw-semibold"><?= htmlspecialchars($p['nazev']) ?></span>
+                        <span class="fw-semibold"><?= htmlspecialchars($p['nazev']) ?></span><?= $p['popis'] !== null && $p['popis'] !== '' ? ': ' . htmlspecialchars($p['popis']) : '' ?>
                         <small class="d-block text-body-secondary">
                             Nahlásil(a) <?= $p['jmeno'] !== null ? htmlspecialchars($p['jmeno'] . ' ' . $p['prijmeni']) : 'bývalý zaměstnanec' ?>
                             · <?= htmlspecialchars($cz($p['nahlaseno'])) ?>
@@ -73,9 +73,13 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
                     <select class="form-select" id="id_typ_problemu" name="id_typ_problemu" required>
                         <option value="">– vyberte –</option>
                         <?php foreach ($typyProblemu as $t): ?>
-                            <option value="<?= (int) $t['id_typ_problemu'] ?>"><?= htmlspecialchars($t['nazev']) ?></option>
+                            <option value="<?= (int) $t['id_typ_problemu'] ?>" data-ostatni="<?= $t['nazev'] === 'Ostatní' ? '1' : '0' ?>"><?= htmlspecialchars($t['nazev']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="col-12 d-none" id="popis-blok">
+                    <label for="popis" class="form-label mb-1">Popište problém</label>
+                    <input type="text" class="form-control" id="popis" name="popis" maxlength="255" placeholder="Co se děje?">
                 </div>
                 <div class="col-sm-auto">
                     <button type="submit" class="btn btn-primary">Nahlásit</button>
@@ -85,14 +89,31 @@ $cz = fn(?string $d): string => $d ? date('j. n. Y H:i', strtotime($d)) : '';
                 <p class="small text-body-secondary mt-3 mb-1">Naposledy vyřešeno:</p>
                 <ul class="small text-body-secondary mb-0">
                     <?php foreach ($vyresene as $p): ?>
-                        <li><?= htmlspecialchars($p['nazev']) ?> (vyřešeno <?= htmlspecialchars($cz($p['vyreseno'])) ?>)</li>
+                        <li><?= htmlspecialchars($p['nazev']) ?><?= $p['popis'] !== null && $p['popis'] !== '' ? ': ' . htmlspecialchars($p['popis']) : '' ?> (vyřešeno <?= htmlspecialchars($cz($p['vyreseno'])) ?>)</li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
         </div>
     </section>
 </main>
-<?php require ROOT . 'app/view/components/footer.php'; ?>
 
+<script>
+    // Pole „Popište problém“ se ukáže jen při výběru typu „Ostatní“ (kontrolu provádí i server).
+    (function () {
+        var select = document.getElementById('id_typ_problemu');
+        var blok = document.getElementById('popis-blok');
+        var popis = document.getElementById('popis');
+        if (!select || !blok || !popis) { return; }
+        function prepni() {
+            var ostatni = select.options[select.selectedIndex].dataset.ostatni === '1';
+            blok.classList.toggle('d-none', !ostatni);
+            popis.required = ostatni;
+        }
+        select.addEventListener('change', prepni);
+        prepni();
+    })();
+</script>
+
+<?php require ROOT . 'app/view/components/footer.php'; ?>
 </body>
 </html>

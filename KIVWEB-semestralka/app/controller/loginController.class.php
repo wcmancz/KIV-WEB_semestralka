@@ -9,7 +9,6 @@ use App\Model\UzivatelModel;
 
 class LoginController extends BaseController
 {
-    /** Obslouží index.php?page=login (zobrazení formuláře i jeho zpracování). */
     public function login(): void
     {
         // Přihlášený uživatel se přihlašovat nemusí.
@@ -18,8 +17,8 @@ class LoginController extends BaseController
             exit;
         }
 
-        // Tyto proměnné uvidí šablona (viz require na konci metody).
-        $chyba = '';
+        $chyba = $_SESSION['flash_chyba'] ?? '';   // např. „Váš účet už neexistuje.“ po smazání účtu
+        unset($_SESSION['flash_chyba']);
         $login = '';             // co uživatel napsal do prvního políčka: login nebo e-mail (vrací se do formuláře při chybě)
 
         // Jednorázová zpráva po registraci (uloží ji RegisterController). Po přečtení se smaže.

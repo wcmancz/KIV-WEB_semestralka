@@ -2,9 +2,31 @@
 
 namespace App\Core;
 
+use App\Model\UzivatelModel;
+
 abstract class BaseController{
+    private static bool $overeno = false;
+
+    /**
+     * Přihlášený uživatel ze session. Při prvním volání v požadavku se ověří v databázi:
+     * smazaný účet se odhlásí a změna role se projeví hned.
+     */
     protected function user(): ?array {
-        return $_SESSION['user'] ?? null;
+        if (!isset($_SESSION['user'])) {
+            return null;
+        }
+        if (!self::$overeno) {
+            self::$overeno = true;
+            $stav = (new UzivatelModel())->stav((int) $_SESSION['user']['id']);
+            if ($stav === null) {
+                unset($_SESSION['user']);
+                $_SESSION['flash_chyba'] = 'Váš účet už neexistuje.';
+                header('Location: index.php?page=login');
+                exit;
+            }
+            $_SESSION['user']['role'] = $stav['role_zam'];
+        }
+        return $_SESSION['user'];
     }
 
     protected function jeZamestnanec(): bool {

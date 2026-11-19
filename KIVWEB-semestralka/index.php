@@ -15,7 +15,9 @@ use App\Controller\LoginController;
 use App\Controller\UvodController;
 use App\Controller\PeceController;
 use App\Controller\ZvireController;
-use App\Controller\PridatController;
+use App\Controller\DnesController;
+use App\Controller\StatistikyController;
+use App\Controller\UzivateleController;
 
 error_reporting(E_ALL);
 ini_set('display_errors', Config::DEBUG ? 1 : 0);
@@ -48,11 +50,17 @@ switch ($page) {
     case 'admin':
         (new PeceController())->sprava();
         break;
-    case 'pridat':
-        (new PridatController())->pridat();
+    case 'zvirata':
+        (new ZvireController())->sprava();
         break;
-    case 'vymazat':
-        (new PridatController())->vymazat();
+    case 'statistiky':
+        (new StatistikyController())->statistiky();
+        break;
+    case 'dnes':
+        (new DnesController())->dnes();
+        break;
+    case 'uzivatele':
+        (new UzivateleController())->sprava();
         break;
     case 'zvire':
         (new ZvireController())->detail();

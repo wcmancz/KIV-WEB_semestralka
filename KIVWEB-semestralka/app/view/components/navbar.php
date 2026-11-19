@@ -14,12 +14,21 @@ $jeAdmin = $user && in_array($user['role'] ?? '', ['admin', 'superadmin'], true)
             </li>
             <?php if ($this->jeZamestnanec()): ?>
                 <li class="nav-item">
+                    <a class="nav-link<?= $aktivni === 'dnes' ? ' active' : '' ?>" href="index.php?page=dnes">Dnes</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link<?= $aktivni === 'sprava' ? ' active' : '' ?>" href="index.php?page=admin"><?= $jeAdmin ? 'Správa péče' : 'Moje péče' ?></a>
                 </li>
             <?php endif; ?>
             <?php if ($jeAdmin): ?>
                 <li class="nav-item">
-                    <a class="nav-link<?= $aktivni === 'pridat' ? ' active' : '' ?>" href="index.php?page=pridat">Přidat a odebrat</a>
+                    <a class="nav-link<?= $aktivni === 'zvirata' ? ' active' : '' ?>" href="index.php?page=zvirata">Zvířata</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?= $aktivni === 'statistiky' ? ' active' : '' ?>" href="index.php?page=statistiky">Statistiky</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?= $aktivni === 'uzivatele' ? ' active' : '' ?>" href="index.php?page=uzivatele">Uživatelé</a>
                 </li>
             <?php endif; ?>
         </ul>
